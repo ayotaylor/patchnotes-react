@@ -1,6 +1,8 @@
 spring:
   application:
     name: gateway
+  # profiles:
+  #   active: debug
   cloud:
     gateway:
       discovery:
@@ -8,54 +10,17 @@ spring:
           enabled: true
           lowerCaseServiceId: true
       routes:
-        - id: user-service
-          uri: lb://user-service
+        - id: userservice-route
+          uri: lb://userservice
           predicates:
             - Path=/api/auth/**,/api/users/**
             - Method=GET,POST,PUT,DELETE
-          #filters:
-            #- RewritePath=/api/(?<segment>.*), /$\{segment}
-            # - name: RequestRateLimiter
-            #   args:
-            #     redis-rate-limiter:
-            #       replenishRate: 10
-            #       burstCapacity: 20
-            #       deny-empty-key: false
-            #     key-resolver: "#{@userKeyResolver}"
-            # - name: CircuitBreaker
-            #   args:
-            #     name: userServiceCircuitBreaker
-            #     fallbackUri: forward:/fallback
-            # - name: Retry
-            #   args:
-            #     retries: 10
-            #     statuses: BAD_GATEWAY
-            # - name: JwtAuthentication
-            #   args:
-            #     tokenHeader: Authorization
-            #     tokenPrefix: "Bearer "
-            #     allowPublicEndpoints: true
-            #     publicEndpoints: "/api/auth/login,/api/auth/register,/actuator/info,/actuator/health"
-        - id: game-service
-          uri: lb://post-service
+        - id: gameservice-route
+          uri: lb://gameservice
           predicates:
-            - Path=/api/games/**,/actuator/health
-          #filters:
-            # - RewritePath=/api/posts/(?<segment>.*), /$\{segment}
-            # - name: CircuitBreaker
-            #   args:
-            #     name: userServiceCircuitBreaker
-            #     fallbackUri: forward:/fallback
-            # - name: Retry
-            #   args:
-            #     retries: 3
-            #     statuses: BAD_GATEWAY
-            # - name: JwtAuthentication
-            #   args:
-            #     tokenHeader: Authorization
-            #     tokenPrefix: "Bearer "
-            #     allowPublicEndpoints: true
-            #     publicEndpoints: "/actuator/info,/actuator/health"
+            - Path=/api/games/** #,/actuator/health
+            - Method=GET,POST,PUT,DELETE
+
 #   data:
 #     redis:
 #       host: redis
@@ -66,26 +31,29 @@ eureka:
     registerWithEureka: true
     fetchRegistry: true
     serviceUrl:
-      defaultZone: http://localhost:8761/eureka #http://admin:password@localhost:8761/eureka
+      defaultZone: http://localhost:8761/eureka/ #http://admin:password@localhost:8761/eureka
 
 server:
   port: 8080
 
-# logging:
-#   level:
-#     org:
-#       springframework:
-#         security: DEBUG
-#         netflix: DEBUG
-#         web:
-#           reactive: DEBUG
-#         cloud:
-#           gateway: DEBUG
-#           netflix:
-#             eureka: DEBUG
-#           client:
-#             loadbalancer: DEBUG
+jwt: # change secret
+  secret: 8d7caec7c5cdc2e69d174e54fb8253ee0e929c5a295651629fcdab24667da806
+  expiration: 3600000  # 1 hour in milliseconds
 
-# jwt: # change secret
-#   secret: RqqTGTbrokhLH59FhcdeQfQIloa7zR/ZIhaBzGPRZzAGVJgWx9faoewBE0JQcGguuC4B1PIzXPxPufaBMdBV0Q==
-#   expiration: 3600000  # 1 hour in milliseconds
+logging:
+  level:
+    org:
+      springframework:
+        security: DEBUG
+        netflix: DEBUG
+        web:
+          reactive: DEBUG
+        cloud:
+          gateway: TRACE
+          netflix:
+            eureka: DEBUG
+          client:
+            loadbalancer: DEBUG
+    com:
+      netflix:
+        discovery: DEBUG

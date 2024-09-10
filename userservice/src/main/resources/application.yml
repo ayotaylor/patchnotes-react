@@ -27,16 +27,16 @@ eureka:
     leaseRenewalIntervalInSeconds: 10
     leaseExpirationDurationInSeconds: 30
 
-# logging:
-#   level:
-#     org:
-#       springframework:
-#         security: DEBUG
-#         web:
-#           reactive: DEBUG
-#         cloud:
-#           netflix:
-#             eureka: DEBUG
+logging:
+  level:
+    org:
+      springframework:
+        security: DEBUG
+        web:
+          reactive: DEBUG
+        cloud:
+          netflix:
+            eureka: DEBUG
 
 # management:
 #   endpoints:
@@ -44,6 +44,6 @@ eureka:
 #       exposure:
 #         include: "*"
 
-# jwt:
-#   secret: RqqTGTbrokhLH59FhcdeQfQIloa7zR/ZIhaBzGPRZzAGVJgWx9faoewBE0JQcGguuC4B1PIzXPxPufaBMdBV0Q==
-#   expiration: 3600000  # 1 hour in milliseconds
+jwt:
+  secret: 8d7caec7c5cdc2e69d174e54fb8253ee0e929c5a295651629fcdab24667da806
+  expiration: 3600000  # 1 hour in milliseconds
