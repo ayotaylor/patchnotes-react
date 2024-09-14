@@ -250,6 +250,12 @@ packages/react-devtools-timeline/dist
 !.yarn/releases
 !.yarn/sdks
 !.yarn/versions
+frontend/.yarn/*
+!frontend/.yarn/patches
+!frontend/.yarn/plugins
+!frontend/.yarn/releases
+!frontend/.yarn/sdks
+!frontend/.yarn/versions
 
 # React Native
 mobile/node_modules/
