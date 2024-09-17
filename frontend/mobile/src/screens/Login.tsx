@@ -2,8 +2,8 @@ import React, { useState } from 'react';
 import { View, TextInput, Button, StyleSheet } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { login } from '../../../shared/src/services/authService';
-import { LoginFormData } from '../../../shared/src/types/auth';
+import { login } from '../shared/services/authService';
+import { LoginFormData } from '../shared/types/auth';
 
 const Login: React.FC = () => {
   const [formData, setFormData] = useState<LoginFormData>({

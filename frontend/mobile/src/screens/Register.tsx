@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import { View, TextInput, Button, StyleSheet } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
-import { register } from '../../../shared/src/services/authService';
-import { RegisterFormData } from '../../../shared/src/types/auth';
+import { register } from '../shared/services/authService';
+import { RegisterFormData } from '../shared/types/auth';
 
 const Register: React.FC = () => {
     const [formData, setFormData] = useState<RegisterFormData>({

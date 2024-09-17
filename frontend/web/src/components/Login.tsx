@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { login } from '../../../shared/src/services/authService';
-import { LoginFormData } from '../../../shared/src/types/auth';
+import { login } from '../shared/services/authService';
+import { LoginFormData } from '../shared/types/auth';
 
 const Login: React.FC = () => {
     const [formData, setFormData] = useState<LoginFormData>({
