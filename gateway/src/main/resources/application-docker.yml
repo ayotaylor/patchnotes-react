@@ -9,7 +9,7 @@ spring:
           lowerCaseServiceId: true
       routes:
         - id: user-service
-          uri: lb://user-service
+          uri: lb://userservice
           predicates:
             - Path=/api/auth/**,/api/users/**
             - Method=GET,POST,PUT,DELETE
@@ -37,7 +37,7 @@ spring:
             #     allowPublicEndpoints: true
             #     publicEndpoints: "/api/auth/login,/api/auth/register,/actuator/info,/actuator/health"
         - id: game-service
-          uri: lb://post-service
+          uri: lb://gameservice
           predicates:
             - Path=/api/games/**,/actuator/health
           filters:

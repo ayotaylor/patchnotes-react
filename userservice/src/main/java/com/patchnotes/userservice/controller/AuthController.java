@@ -11,6 +11,7 @@ import com.patchnotes.userservice.dto.LoginDto;
 import com.patchnotes.userservice.dto.RegisterDto;
 import com.patchnotes.userservice.dto.response.LoginResponse;
 import com.patchnotes.userservice.exception.ApiRequestException;
+import com.patchnotes.userservice.model.JwtToken;
 import com.patchnotes.userservice.model.User;
 import com.patchnotes.userservice.service.AuthService;
 
@@ -33,7 +34,8 @@ public class AuthController {
     @PostMapping("/authenticate")
     public ResponseEntity<?> authenticate(@RequestBody LoginDto request) {
         try {
-            LoginResponse response = new LoginResponse(authService.authenticate(request));
+            JwtToken jwtTokenDetails = authService.authenticate(request);
+            LoginResponse response = new LoginResponse(jwtTokenDetails.getToken(), jwtTokenDetails.getExpiration());
             return ResponseEntity.ok(response);
         } catch (ApiRequestException e) {
             return ResponseEntity.badRequest().body("User not found");

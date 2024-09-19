@@ -20,7 +20,7 @@ const Login: React.FC = () => {
         try {
             const response = await login(formData.username, formData.password);
             localStorage.setItem('token', response.token);
-            navigate('dashboard'); // TODO: change this to the appropriate page
+            navigate('/dashboard'); // TODO: change this to the appropriate page
         } catch (error) {
             console.error('Login failed: ', error);
         }

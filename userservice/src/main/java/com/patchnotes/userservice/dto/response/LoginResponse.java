@@ -1,16 +1,16 @@
 package com.patchnotes.userservice.dto.response;
 
-import com.patchnotes.userservice.model.JwtToken;
-
 import lombok.Getter;
 import lombok.Setter;
 
 @Getter
 @Setter
 public class LoginResponse {
-    private JwtToken jwtToken;
+    private String token;
+    private long expiration;
 
-    public LoginResponse(JwtToken jwtToken) {
-        this.jwtToken = jwtToken;
+    public LoginResponse(String token, long expiration) {
+        this.token = token;
+        this.expiration = expiration;
     }
 }

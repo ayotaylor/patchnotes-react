@@ -256,6 +256,18 @@ frontend/.yarn/*
 !frontend/.yarn/releases
 !frontend/.yarn/sdks
 !frontend/.yarn/versions
+frontend/mobile/.yarn/*
+!frontend/mobile/.yarn/patches
+!frontend/mobile/.yarn/plugins
+!frontend/mobile/.yarn/releases
+!frontend/mobile/.yarn/sdks
+!frontend/mobile/.yarn/versions
+frontend/web/.yarn/*
+!frontend/web/.yarn/patches
+!frontend/web/.yarn/plugins
+!frontend/web/.yarn/releases
+!frontend/web/.yarn/sdks
+!frontend/web/.yarn/versions
 
 # React Native
 mobile/node_modules/

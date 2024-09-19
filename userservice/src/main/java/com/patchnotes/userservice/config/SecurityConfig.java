@@ -36,7 +36,7 @@ public class SecurityConfig {
 
         http
             .csrf(csrf -> csrf.disable())
-            .cors(cors -> /*cors.disable()*/cors.configurationSource(corsConfigurationSource()))
+            .cors(cors -> cors.disable()/*cors.configurationSource(corsConfigurationSource())*/)
             .authorizeHttpRequests(authorize -> authorize
                 .requestMatchers("/api/auth/register", "/api/auth/authenticate", "/actuator/health").permitAll()
                 .anyRequest().authenticated())
@@ -48,20 +48,22 @@ public class SecurityConfig {
         return http.build();
     }
 
-    @Bean
-    CorsConfigurationSource corsConfigurationSource() {
-        CorsConfiguration configuration = new CorsConfiguration();
+    // @Bean
+    // CorsConfigurationSource corsConfigurationSource() {
+    //     CorsConfiguration configuration = new CorsConfiguration();
 
-        configuration.setAllowedOrigins(List.of("http://localhost:8080", "http://localhost:8082"));
-        configuration.setAllowedMethods(List.of("GET","POST", "PUT", "DELETE", "OPTIONS")); // maybe adjust this
-        configuration.setAllowedHeaders(Arrays.asList("*"));
-        configuration.setAllowedHeaders(List.of("Authorization","Content-Type"));
-        configuration.setAllowCredentials(true);
+    //     configuration.setAllowedOrigins(List.of("http://localhost:8080", "http://localhost:8082"));
+    //     configuration.setAllowedMethods(List.of("GET","POST", "PUT", "DELETE", "OPTIONS")); // maybe adjust this
+    //     //configuration.setAllowedHeaders(Arrays.asList("*"));
+    //     configuration.setAllowedHeaders(Arrays.asList("Authorization", "Content-Type", "X-Requested-With", "Accept", "Origin", "Access-Control-Request-Method", "Access-Control-Request-Headers"));
+    //     configuration.setExposedHeaders(Arrays.asList("Access-Control-Allow-Origin", "Access-Control-Allow-Credentials"));
+    //     configuration.setAllowCredentials(true);
+    //     configuration.setMaxAge(3600L);
 
-        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+    //     UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
 
-        source.registerCorsConfiguration("/**",configuration);
+    //     source.registerCorsConfiguration("/**",configuration);
 
-        return source;
-    }
+    //     return source;
+    // }
 }
