@@ -18,6 +18,7 @@ import com.patchnotes.userservice.service.AuthService;
 @RequestMapping("/api/auth")
 @RestController
 public class AuthController {
+
     @Autowired
     private AuthService authService;
 
@@ -42,6 +43,5 @@ public class AuthController {
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
-
     }
 }
