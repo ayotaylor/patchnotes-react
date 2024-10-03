@@ -18,7 +18,7 @@ spring:
         - id: gameservice-route
           uri: lb://gameservice
           predicates:
-            - Path=/api/games/** #,/actuator/health
+            - Path=/api/games/**,/actuator/health
             - Method=GET,POST,PUT,DELETE
 
 #   data:
