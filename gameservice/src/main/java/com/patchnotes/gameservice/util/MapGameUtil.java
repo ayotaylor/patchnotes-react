@@ -47,13 +47,13 @@ public class MapGameUtil {
         setFranchiseInfo(game, igdbGame);
 
         game.setCollections(getJsonArrayAsString(igdbGame, "collections"));
-        game.setCover(igdbGame.path("cover").asText());
+        game.setCover(igdbGame.path("cover").path("url").asText());
         game.setUrl(igdbGame.path("url").asText());
 
         setVersionInfo(game, igdbGame);
 
         game.setKeywords(getJsonArrayAsString(igdbGame, "keywords"));
-        game.setLanguages(getJsonArrayAsString(igdbGame, "language_supports"));
+        game.setLanguages(getLanguageSupports(igdbGame));
         game.setMultiplayerModes(getJsonArrayAsString(igdbGame, "multiplayer_modes"));
         game.setPlayerPerspectives(getJsonArrayAsString(igdbGame, "player_perspectives"));
 
@@ -119,6 +119,23 @@ public class MapGameUtil {
                 }
             }
         }
+    }
+
+    private String getLanguageSupports(JsonNode gameNode) {
+
+        JsonNode languageSupportsNode = gameNode.path("language_supports");
+        if (languageSupportsNode.isMissingNode() || languageSupportsNode.isNull()) {
+            return null;
+        }
+        if (!languageSupportsNode.isArray()) {
+            return null;
+        }
+        ArrayNode languageSupports = (ArrayNode) languageSupportsNode;
+        List<String> languages = new ArrayList<>();
+        for (JsonNode language : languageSupports) {
+            languages.add(language.path("language").path("name").asText());
+        }
+        return objectMapper.valueToTree(languages).toString();
     }
 
     private static String getJsonArrayAsString(JsonNode node, String fieldName) {

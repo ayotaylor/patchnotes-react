@@ -1,15 +1,18 @@
 spring:
   application:
     name: gameservice
-
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://patchnotes-db:3306/patchnotesDB?useSSL=false&serverTimezone=UTC
+    url: jdbc:mysql://patchnotes-db:3306/patchnotesDB?useSSL=false&serverTimezone=UTC&reWriteBatchedInserts=true
     username: root
     password: password
   jpa:
     hibernate:
       ddl-auto: update # create and drop table, good for testing, production set to none or comment it
+    properties:
+      jdbc:
+        batch-size: 500
+        order-inserts: true
     show-sql: true
     database-platform: org.hibernate.dialect.MySQLDialect
   security:
@@ -18,7 +21,7 @@ spring:
       password: password
 
 server:
-  port: 8081
+  port: 8083
 
 eureka:
   client:
@@ -33,7 +36,3 @@ eureka:
 #     org:
 #       springframework:
 #         security: INFO
-
-# jwt:
-#   secret: RqqTGTbrokhLH59FhcdeQfQIloa7zR/ZIhaBzGPRZzAGVJgWx9faoewBE0JQcGguuC4B1PIzXPxPufaBMdBV0Q==
-#   expiration: 3600000  # 1 hour in milliseconds

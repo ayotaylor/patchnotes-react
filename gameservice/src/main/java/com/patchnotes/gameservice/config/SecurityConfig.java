@@ -10,6 +10,7 @@ import org.springframework.security.web.SecurityFilterChain;
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
+
     public SecurityConfig() {
     }
 
@@ -18,10 +19,10 @@ public class SecurityConfig {
 
         http
             .csrf(csrf -> csrf.disable())
-            .cors(cors -> cors.disable()/*cors.configurationSource(corsConfigurationSource())*/)
-            .authorizeHttpRequests(authorize -> authorize
-                //.requestMatchers("/api/auth/register", "/api/auth/authenticate", "/actuator/health").permitAll()
-                .anyRequest().authenticated())
+            .cors(cors -> cors.disable())
+            // .authorizeHttpRequests(authorize -> authorize
+            //     .requestMatchers("/actuator/health").permitAll()
+            //     .anyRequest().authenticated())
             .sessionManagement(session -> session
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS));
 

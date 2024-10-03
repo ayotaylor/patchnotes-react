@@ -10,6 +10,7 @@ import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.SequenceGenerator;
 import jakarta.persistence.Table;
 import lombok.Getter;
 import lombok.Setter;
@@ -21,10 +22,11 @@ import lombok.Setter;
 public class Game {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator="game_sequence")
+    @SequenceGenerator(name="game_sequence", sequenceName = "game_seq")
     private Long id;
 
-    @Column(unique = true)
+    @Column(unique = true, nullable = false)
     private Long igdbId;
 
     private String name;
@@ -76,7 +78,6 @@ public class Game {
     @Column(columnDefinition = "JSON")
     public String collections;
 
-    // come back to this. what's the best datatype
     public String cover;
 
     public String url;

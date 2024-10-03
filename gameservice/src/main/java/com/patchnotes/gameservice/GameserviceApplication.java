@@ -11,7 +11,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 import com.patchnotes.gameservice.jobs.GameDataPuller;
 
 @SpringBootApplication
-//@EnableDiscoveryClient
+@EnableDiscoveryClient
 @EnableScheduling
 public class GameserviceApplication {
 

@@ -1,35 +1,29 @@
 package com.patchnotes.gameservice.controller;
 
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.patchnotes.gameservice.dto.GameApiUpdatePaylod;
-import com.patchnotes.gameservice.jobs.GameDataPuller;
+import com.patchnotes.gameservice.dto.GameDto;
 import com.patchnotes.gameservice.service.GameService;
 
 @RequestMapping("/api/games")
 @RestController
 public class GameController {
 
-    @RestController
-    @RequestMapping("/webhook")
-    public class WebhookController {
-        private final GameDataPuller gameDataPuller;
-        private final GameService gameService;
+    private final GameService gameService;
 
-        public WebhookController(GameService gameService, GameDataPuller gameDataPuller) {
-            this.gameService = gameService;
-            this.gameDataPuller = gameDataPuller;
-        }
+    public GameController(GameService gameService) {
+        this.gameService = gameService;
+    }
 
-        @PostMapping("/game-update-hook")
-        public ResponseEntity<String> handleIgdbUpdate(@RequestBody GameApiUpdatePaylod payload) {
-            // Process the update payload and update the database
-            //gameDataPuller.processUpdate(payload);
-            return ResponseEntity.ok("Update processed successfully");
-        }
+    @GetMapping("/{id}")
+    public ResponseEntity<GameDto> getGamebyId(@PathVariable Long id) {
+
+        GameDto response = gameService.getGameById(id);
+
+        return response != null ? ResponseEntity.ok(response) : ResponseEntity.notFound().build();
     }
 }

@@ -13,8 +13,8 @@ import com.fasterxml.jackson.databind.JsonNode;
 @Component
 public class GameApiClient {
 
-    private final String clientId = "";
-    private final String accessToken = "";
+    private final String clientId = "bh9zke91pvzr3e6hsb0giy596xorw9";
+    private final String accessToken = "hekt8ci8kx98kw7sg5vxmmtj5jqnv2";
     private final String apiUrl = "https://api.igdb.com/v4/games";
 
     private final RestTemplate restTemplate;

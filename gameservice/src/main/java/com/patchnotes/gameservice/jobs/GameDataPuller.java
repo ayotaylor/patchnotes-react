@@ -23,18 +23,18 @@ public class GameDataPuller implements CommandLineRunner{
     //     storeGames(games);
     // }
 
-    @Scheduled(fixedDelay = 24 * 60 * 60 * 1000) // Run every 24 hours
-    public void fetchGamesFromApi()
-    {
-        gameApiService.fetchAllGames();
-    }
+    // @Scheduled(fixedDelay = 24 * 60 * 60 * 1000) // Run every 24 hours
+    // public void fetchGamesFromApi()
+    // {
+    //     gameApiService.fetchAllGames();
+    // }
 
     @Override
     @Profile("!production")
     public void run(String... args) {
-        if (args.length > 0 && args[0].equals("--sync-igdb")) {
-            testfetchGames();
-        }
+        // if (args.length > 0 && args[0].equals("--sync-igdb")) {
+        //     testfetchGames();
+        // }
     }
 
     public void testfetchGames() {
