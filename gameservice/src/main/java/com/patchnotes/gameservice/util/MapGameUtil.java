@@ -13,25 +13,35 @@ import org.springframework.stereotype.Component;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.patchnotes.gameservice.model.Category;
 import com.patchnotes.gameservice.model.Game;
 import com.patchnotes.gameservice.model.Region;
+import com.patchnotes.gameservice.model.RegionReleaseDate;
 
 @Component
 public class MapGameUtil {
-    private static final ObjectMapper objectMapper = new ObjectMapper();
+
+    private static final ObjectMapper objectMapper;
+
+    static {
+        objectMapper = new ObjectMapper();
+        objectMapper.registerModule(new JavaTimeModule());
+    }
 
     public Game mapIgdbResponseToGame(JsonNode igdbGame) {
         Game game = new Game();
 
-        game.setName(igdbGame.path("name").asText());
+        game.setName(igdbGame.path("name").asText().toLowerCase());
         game.setAlternativeNames(getAlternativeNames(igdbGame));
-        game.setSummary(igdbGame.path("summary").asText());
+        game.setSummary(igdbGame.path("summary").asText().toLowerCase());
 
-        game.setStoryLine(StringUtils.truncate(igdbGame.path("storyline").asText(), 65535));
+        game.setStoryLine(StringUtils.truncate(igdbGame.path("storyline").asText().toLowerCase(), 65535));
 
-        setReleaseDateAndRegion(game, igdbGame.path("release_dates"));
+        game.setFirstReleaseDate(convertUnixTimestampToLocalDate(igdbGame.path("first_release_date").asLong()));
+        setReleaseDateAndRegion(game, igdbGame.path("release_dates"), igdbGame.path("first_release_date"));
+        game.setReleaseStatus(getReleaseStatus(game.getFirstReleaseDate()));
 
         setDeveloperAndPublisher(game, igdbGame.path("involved_companies"));
 
@@ -47,8 +57,8 @@ public class MapGameUtil {
         setFranchiseInfo(game, igdbGame);
 
         game.setCollections(getJsonArrayAsString(igdbGame, "collections"));
-        game.setCover(igdbGame.path("cover").path("url").asText());
-        game.setUrl(igdbGame.path("url").asText());
+        game.setCover(igdbGame.path("cover").path("url").asText().toLowerCase());
+        game.setUrl(igdbGame.path("url").asText().toLowerCase());
 
         setVersionInfo(game, igdbGame);
 
@@ -82,7 +92,7 @@ public class MapGameUtil {
         ArrayNode altNames = (ArrayNode) altNamesNode;
         List<String> names = new ArrayList<>();
         for (JsonNode altName : altNames) {
-            names.add(altName.path("name").asText());
+            names.add(altName.path("name").asText().toLowerCase());
         }
         return objectMapper.valueToTree(names).toString();
     }
@@ -93,24 +103,35 @@ public class MapGameUtil {
                 .toLocalDate();
     }
 
-    private static String getReleaseStatus(long firstReleaseDate) {
-        LocalDate releaseDate = convertUnixTimestampToLocalDate(firstReleaseDate);
-        LocalDate now = LocalDate.now();
-        return releaseDate.isAfter(now) ? "Upcoming" : "Released";
+    private static String getReleaseStatus(LocalDate firstReleaseDate) {
+        return firstReleaseDate.isAfter(LocalDate.now()) ? "Upcoming" : "Released";
     }
 
-    private static void setReleaseDateAndRegion(Game game, JsonNode releaseDates) {
-        if (releaseDates.isArray() && releaseDates.size() > 0) {
-            JsonNode firstRelease = releaseDates.get(0);
-            game.setReleaseDate(convertUnixTimestampToLocalDate(firstRelease.path("date").asLong()));
-            game.setRegion(Region.fromCode(firstRelease.path("region").asInt()));
+    private static void setReleaseDateAndRegion(Game game, JsonNode releaseDatesNode, JsonNode firstReleaseDate) {
+        if (!firstReleaseDate.isMissingNode() && !firstReleaseDate.isNull()) {
+            game.setFirstReleaseDate(convertUnixTimestampToLocalDate(firstReleaseDate.asLong()));
+        }
+
+        if (!releaseDatesNode.isMissingNode() && !releaseDatesNode.isNull() && releaseDatesNode.isArray()) {
+            LocalDate firstRelease = game.getFirstReleaseDate() != null ? game.getFirstReleaseDate() : LocalDate.MAX;
+            ArrayNode releaseDates = (ArrayNode) releaseDatesNode;
+            List<RegionReleaseDate> regionReleaseDates = new ArrayList<>();
+            for (JsonNode releaseDate : releaseDates) {
+                LocalDate date = convertUnixTimestampToLocalDate(releaseDate.path("date").asLong());
+                Region region = Region.fromCode(releaseDate.path("region").asInt());
+                regionReleaseDates.add(new RegionReleaseDate(region, date));
+                if (date.isBefore(firstRelease)) {
+                    game.setFirstReleaseDate(date);
+                }
+            }
+            game.setRegionReleaseDate(objectMapper.valueToTree(regionReleaseDates).toString());
         }
     }
 
     private static void setDeveloperAndPublisher(Game game, JsonNode involvedCompanies) {
         if (involvedCompanies.isArray()) {
             for (JsonNode company : involvedCompanies) {
-                String companyName = company.path("company").path("name").asText();
+                String companyName = company.path("company").path("name").asText().toLowerCase();
                 if (company.path("developer").asBoolean()) {
                     game.setDeveloper(companyName);
                 }
@@ -121,7 +142,7 @@ public class MapGameUtil {
         }
     }
 
-    private String getLanguageSupports(JsonNode gameNode) {
+    private static String getLanguageSupports(JsonNode gameNode) {
 
         JsonNode languageSupportsNode = gameNode.path("language_supports");
         if (languageSupportsNode.isMissingNode() || languageSupportsNode.isNull()) {
@@ -133,7 +154,7 @@ public class MapGameUtil {
         ArrayNode languageSupports = (ArrayNode) languageSupportsNode;
         List<String> languages = new ArrayList<>();
         for (JsonNode language : languageSupports) {
-            languages.add(language.path("language").path("name").asText());
+            languages.add(language.path("language").path("name").asText().toLowerCase());
         }
         return objectMapper.valueToTree(languages).toString();
     }
@@ -143,7 +164,7 @@ public class MapGameUtil {
         if (arrayNode.isArray()) {
             List<String> items = new ArrayList<>();
             for (JsonNode item : arrayNode) {
-                items.add(item.path("name").asText());
+                items.add(item.path("name").asText().toLowerCase());
             }
             return objectMapper.valueToTree(items).toString();
         }
@@ -156,7 +177,7 @@ public class MapGameUtil {
             for (JsonNode game : similarGames) {
                 Map<String, Object> gameMap = new HashMap<>();
                 gameMap.put("id", game.path("id").asLong());
-                gameMap.put("name", game.path("name").asText());
+                gameMap.put("name", game.path("name").asText().toLowerCase());
                 games.add(gameMap);
             }
             return objectMapper.valueToTree(games).toString();
@@ -167,7 +188,7 @@ public class MapGameUtil {
     private static void setFranchiseInfo(Game game, JsonNode igdbGame) {
         JsonNode franchise = igdbGame.path("franchise");
         if (!franchise.isMissingNode()) {
-            game.setFranchise(franchise.path("name").asText());
+            game.setFranchise(franchise.path("name").asText().toLowerCase());
         }
         game.setFranchises(getJsonArrayAsString(igdbGame, "franchises"));
     }
@@ -176,10 +197,10 @@ public class MapGameUtil {
         JsonNode versionParent = igdbGame.path("version_parent");
         JsonNode parentGame = igdbGame.path("parent_game");
         if (!versionParent.isMissingNode()) {
-            game.setVersionParent(versionParent.path("name").asText());
+            game.setVersionParent(versionParent.path("name").asText().toLowerCase());
         } else if (!parentGame.isMissingNode()) {
-            game.setParentGame(parentGame.path("name").asText());
+            game.setParentGame(parentGame.path("name").asText().toLowerCase());
         }
-        game.setVersionTitle(igdbGame.path("version_title").asText());
+        game.setVersionTitle(igdbGame.path("version_title").asText().toLowerCase());
     }
 }

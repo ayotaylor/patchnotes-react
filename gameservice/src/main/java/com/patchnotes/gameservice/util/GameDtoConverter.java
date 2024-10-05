@@ -8,7 +8,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.patchnotes.gameservice.dto.GameDto;
 import com.patchnotes.gameservice.dto.SimilarGamesDto;
 import com.patchnotes.gameservice.model.Game;
-import com.patchnotes.gameservice.repo.GameRepository;
+import com.patchnotes.gameservice.model.RegionReleaseDate;
 
 import java.util.List;
 import java.util.Map;
@@ -33,8 +33,6 @@ public class GameDtoConverter {
         dto.setStoryLine(game.getStoryLine());
         dto.setFirstReleaseDate(game.getFirstReleaseDate());
         dto.setReleaseStatus(game.getReleaseStatus());
-        dto.setRegion(game.getRegion());
-        dto.setReleaseDate(game.getReleaseDate());
         dto.setDeveloper(game.getDeveloper());
         dto.setPublisher(game.getPublisher());
         dto.setCategory(game.getCategory());
@@ -74,6 +72,7 @@ public class GameDtoConverter {
                 List<SimilarGamesDto> similarGameDtos = similarGames.stream()
                     .map(similarGame -> new SimilarGamesDto(
                         Long.valueOf(similarGame.get("id").toString()),
+                        Long.valueOf(similarGame.get("igdbId").toString()),
                         (String) similarGame.get("name")
                     ))
                     .collect(Collectors.toList());
@@ -96,6 +95,17 @@ public class GameDtoConverter {
             }
             if (game.getPlayerPerspectives() != null) {
                 dto.setPlayerPerspectives(objectMapper.readValue(game.getPlayerPerspectives(), List.class));
+            }
+            if (game.getRegionReleaseDate() != null) {  //TODO: come back to this
+                List<RegionReleaseDate> regionReleaseDates = objectMapper.readValue(game.getRegionReleaseDate(), List.class);
+                // List<SimilarGamesDto> similarGameDtos = similarGames.stream()
+                //     .map(similarGame -> new SimilarGamesDto(
+                //         Long.valueOf(similarGame.get("id").toString()),
+                //         (String) similarGame.get("name")
+                //     ))
+                //     .collect(Collectors.toList());
+                // dto.setSimilarGames(similarGameDtos);
+                dto.setRegionReleaseDates(regionReleaseDates);
             }
         } catch (Exception e) {
             // Log the error and handle it appropriately

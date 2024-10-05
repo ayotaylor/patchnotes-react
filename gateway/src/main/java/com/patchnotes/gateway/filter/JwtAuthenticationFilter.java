@@ -26,6 +26,7 @@ public class JwtAuthenticationFilter implements WebFilter {
 
     private final JwtUtil jwtUtil;
 
+    // TODO: move to configuration
     private final List<String> excludedPaths = Arrays.asList("/api/auth/authenticate", "/api/auth/register");
 
     public JwtAuthenticationFilter(JwtUtil jwtUtil) {

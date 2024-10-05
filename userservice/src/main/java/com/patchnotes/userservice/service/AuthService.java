@@ -14,6 +14,7 @@ import com.patchnotes.userservice.dto.RegisterDto;
 import com.patchnotes.userservice.exception.ApiRequestException;
 import com.patchnotes.userservice.model.JwtToken;
 import com.patchnotes.userservice.model.User;
+import com.patchnotes.userservice.model.UserType;
 import com.patchnotes.userservice.repo.UserRepository;
 import com.patchnotes.userservice.util.JwtUtil;
 
@@ -56,6 +57,7 @@ public class AuthService {
         user.setName(input.getName());
         user.setEmail(input.getEmail());
         user.setPassword(passwordEncoder.encode(input.getPassword()));
+        user.setUserType(UserType.REGULAR);
 
         return userRepository.save(user);
     }

@@ -42,9 +42,8 @@ public class Game {
     private LocalDate firstReleaseDate;
     private String releaseStatus;
 
-    @Enumerated(EnumType.STRING)
-    private Region region;
-    private LocalDate releaseDate;
+    @Column(columnDefinition = "JSON")
+    private String regionReleaseDate;
 
     private String developer;
     private String publisher;

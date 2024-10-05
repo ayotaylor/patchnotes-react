@@ -32,17 +32,17 @@ public class GameService {
         GameDto dto = gameConverter.convertToDTO(game);
         if (dto.getSimilarGames() != null) {
             for (SimilarGamesDto similarGame : dto.getSimilarGames()) {
-                similarGame.setCover(fetchGameCover(similarGame.getIgbdId()));
+                similarGame.setCover(fetchGameCover(similarGame.getIgdbId()));
             }
         }
 
         return dto;
     }
 
-    public String fetchGameCover(Long id) {
+    public String fetchGameCover(Long igdbId) {
 
-        Game game = gameRepo.findByIgdbId(id);
+        Game game = gameRepo.findByIgdbId(igdbId);
 
-        return game!= null ? game.getCover() : null;
+        return game != null ? game.getCover() : null;
     }
 }

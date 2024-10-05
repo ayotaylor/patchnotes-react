@@ -2,6 +2,7 @@ package com.patchnotes.gameservice.dto;
 
 import com.patchnotes.gameservice.model.Category;
 import com.patchnotes.gameservice.model.Region;
+import com.patchnotes.gameservice.model.RegionReleaseDate;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -21,8 +22,7 @@ public class GameDto {
     private String storyLine;
     private LocalDate firstReleaseDate;
     private String releaseStatus;
-    private Region region;
-    private LocalDate releaseDate;
+    private List<RegionReleaseDate> regionReleaseDates;
     private String developer;
     private String publisher;
     private List<String> platforms;

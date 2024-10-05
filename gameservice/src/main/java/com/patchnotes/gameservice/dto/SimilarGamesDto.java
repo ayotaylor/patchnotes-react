@@ -7,13 +7,14 @@ import lombok.Setter;
 @Setter
 public class SimilarGamesDto {
 
-    private Long igbdId;
+    private Long id;
+    private Long igdbId;
     private String name;
     private String cover;
 
-    public SimilarGamesDto(Long id, String name) {
-
-        this.igbdId = id;
+    public SimilarGamesDto(Long id, Long igdbId, String name) {
+        this.id = id;
+        this.igdbId = igdbId;
         this.name = name;
     }
 }

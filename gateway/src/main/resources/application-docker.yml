@@ -13,49 +13,11 @@ spring:
           predicates:
             - Path=/api/auth/**,/api/users/**
             - Method=GET,POST,PUT,DELETE
-          filters:
-            #- RewritePath=/api/(?<segment>.*), /$\{segment}
-            # - name: RequestRateLimiter
-            #   args:
-            #     redis-rate-limiter:
-            #       replenishRate: 10
-            #       burstCapacity: 20
-            #       deny-empty-key: false
-            #     key-resolver: "#{@userKeyResolver}"
-            # - name: CircuitBreaker
-            #   args:
-            #     name: userServiceCircuitBreaker
-            #     fallbackUri: forward:/fallback
-            # - name: Retry
-            #   args:
-            #     retries: 10
-            #     statuses: BAD_GATEWAY
-            # - name: JwtAuthentication
-            #   args:
-            #     tokenHeader: Authorization
-            #     tokenPrefix: "Bearer "
-            #     allowPublicEndpoints: true
-            #     publicEndpoints: "/api/auth/login,/api/auth/register,/actuator/info,/actuator/health"
         - id: game-service
           uri: lb://gameservice
           predicates:
             - Path=/api/games/**,/actuator/health
-          filters:
-            # - RewritePath=/api/posts/(?<segment>.*), /$\{segment}
-            # - name: CircuitBreaker
-            #   args:
-            #     name: userServiceCircuitBreaker
-            #     fallbackUri: forward:/fallback
-            # - name: Retry
-            #   args:
-            #     retries: 3
-            #     statuses: BAD_GATEWAY
-            # - name: JwtAuthentication
-            #   args:
-            #     tokenHeader: Authorization
-            #     tokenPrefix: "Bearer "
-            #     allowPublicEndpoints: true
-            #     publicEndpoints: "/actuator/info,/actuator/health"
+            - Method=GET,POST,PUT,DELETE
 #   data:
 #     redis:
 #       host: redis

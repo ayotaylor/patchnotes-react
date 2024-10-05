@@ -2,13 +2,14 @@ package com.patchnotes.gameservice.service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.apache.el.stream.Optional;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import com.patchnotes.gameservice.dto.GameDto;
 import com.patchnotes.gameservice.model.Game;
 import com.patchnotes.gameservice.repo.GameRepository;
 import com.patchnotes.gameservice.util.GameApiClient;
@@ -39,7 +40,7 @@ public class GameApiService {
                 hasMoreData = false;
             } else {
                 List<Game> games = mapResponseToGames(response);
-                storeGames(games);
+                bulkUpsertGames(games);
                 offset += limit;
             }
         }
@@ -85,19 +86,28 @@ public class GameApiService {
     }
 
     //TODO: handle exceptions properly
-    private void storeGames(List<Game> games) {
+    private void bulkUpsertGames(List<Game> games) {
+        // Get all IgdbIds from the new games
+        List<Long> igdbIds = games.stream().map(Game::getIgdbId).collect(Collectors.toList());
+
+        // Fetch existing games in a single query
+        List<Game> existingGames = gameRepository.findAllByIgdbIdIn(igdbIds);
+
+        // Create a map of existing games for easy lookup
+        Map<Long, Game> existingGameMap = existingGames.stream()
+                .collect(Collectors.toMap(Game::getIgdbId, game -> game));
         List<Game> gamesToSave = new ArrayList<>();
 
         try {
             for (Game game : games) {
-                // Game existingGame = gameRepository.findByIgdbId(game.getIgdbId());
-                // if (existingGame != null) {
-                //     // Update existing game
-                //     game.setId(existingGame.getId());
-                //     game.setCreatedAt(existingGame.getCreatedAt());
-                //     game.setUpdatedAt(java.time.LocalDateTime.now());
-                // }
-                gamesToSave.add(game);
+                Game existingGame = existingGameMap.get(game.getIgdbId());
+                if (existingGame != null) {
+                    updateGameFields(existingGame, game);
+                    gamesToSave.add(existingGame);
+                }
+                else {
+                    gamesToSave.add(game);
+                }
             }
 
             gameRepository.saveAll(gamesToSave);
@@ -107,6 +117,42 @@ public class GameApiService {
         catch (Exception e) {
             System.out.println("storeGames failed with unknown exception" + e.getMessage());
         }
+    }
+
+    private void updateGameFields(Game existingGame, Game newGame) {
+        existingGame.setName(newGame.getName());
+        existingGame.setAlternativeNames(newGame.getAlternativeNames());
+        existingGame.setSummary(newGame.getSummary());
+        existingGame.setStoryLine(newGame.getStoryLine());
+        existingGame.setFirstReleaseDate(newGame.getFirstReleaseDate());
+        existingGame.setReleaseStatus(newGame.getReleaseStatus());
+        existingGame.setRegionReleaseDate(newGame.getRegionReleaseDate());
+        existingGame.setDeveloper(newGame.getDeveloper());
+        existingGame.setPublisher(newGame.getPublisher());
+        existingGame.setPlatforms(newGame.getPlatforms());
+        existingGame.setGenres(newGame.getGenres());
+        existingGame.setBundles(newGame.getBundles());
+        existingGame.setRemakes(newGame.getRemakes());
+        existingGame.setRemasters(newGame.getRemasters());
+        existingGame.setSimilarGames(newGame.getSimilarGames());
+        existingGame.setCategory(newGame.getCategory());
+        existingGame.setFranchise(newGame.getFranchise());
+        existingGame.setFranchises(newGame.getFranchises());
+        existingGame.setCollections(newGame.getCollections());
+        existingGame.setCover(newGame.getCover());
+        existingGame.setUrl(newGame.getUrl());
+        existingGame.setVersionParent(newGame.getVersionParent());
+        existingGame.setParentGame(newGame.getParentGame());
+        existingGame.setVersionTitle(newGame.getVersionTitle());
+        existingGame.setKeywords(newGame.getKeywords());
+        existingGame.setLanguages(newGame.getLanguages());
+        existingGame.setMultiplayerModes(newGame.getMultiplayerModes());
+        existingGame.setPlayerPerspectives(newGame.getPlayerPerspectives());
+        existingGame.setAverageRating(newGame.getAverageRating());
+        existingGame.setBacklogCount(newGame.getBacklogCount());
+        existingGame.setPlayingCount(newGame.getPlayingCount());
+        existingGame.setCompletedCount(newGame.getCompletedCount());
+        existingGame.setUpdatedAt(java.time.LocalDateTime.now());
     }
 
 }

@@ -27,7 +27,7 @@ eureka:
   client:
     serviceUrl:
       defaultZone: http://localhost:8761/eureka/
-    enabled: false  # remove this
+    #enabled: false  # remove this
   instance:
     leaseRenewalIntervalInSeconds: 10
     leaseExpirationDurationInSeconds: 30

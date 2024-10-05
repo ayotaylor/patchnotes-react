@@ -31,8 +31,20 @@ eureka:
     leaseRenewalIntervalInSeconds: 10
     leaseExpirationDurationInSeconds: 30
 
-# logging:
-#   level:
-#     org:
-#       springframework:
-#         security: INFO
+logging:
+  level:
+    org:
+      springframework:
+        security: DEBUG
+        netflix: DEBUG
+        web:
+          reactive: DEBUG
+        cloud:
+          gateway: TRACE
+          netflix:
+            eureka: DEBUG
+          client:
+            loadbalancer: DEBUG
+    com:
+      netflix:
+        discovery: DEBUG

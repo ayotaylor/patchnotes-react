@@ -1,5 +1,6 @@
 package com.patchnotes.gameservice.repo;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -12,4 +13,5 @@ import com.patchnotes.gameservice.model.Game;
 public interface GameRepository extends JpaRepository<Game, Long>{
     @NonNull Optional<Game> findById(@NonNull Long id);
     Game findByIgdbId(@NonNull Long id);
+    List<Game> findAllByIgdbIdIn(List<Long> ids);
   }
