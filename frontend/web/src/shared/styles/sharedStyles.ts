@@ -130,7 +130,7 @@ export const sharedStyles: SharedStyles = {
   gameActions: {
     container: {
       flexDirection: "row",
-      justifyContent: "sapce-between",
+      justifyContent: "space-between",
       marginBottom: 30,
     },
     button: {

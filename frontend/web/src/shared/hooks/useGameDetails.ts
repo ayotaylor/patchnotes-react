@@ -1,6 +1,7 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import axios from 'axios';
 import { Game } from '../types/game/game';
+import { useGameCache } from '../components/GameCacheContext';
 
 interface UseGameDetailsResult {
     game: Game | null;
@@ -18,31 +19,32 @@ interface UseGameDetailsResult {
 // };
 
 const useGameDetails = (gameId: number) => {
+    const { cache, addToCache } = useGameCache();
     const [game, setGame] = useState<Game | null>(null);
     const [loading, setLoading] = useState<boolean>(true);
     const [error, setError] = useState<string | null>(null);
 
     const token: string | null = localStorage.getItem("token");
 
-    useEffect(() => {
-        const fetchGameDetails = async () => {
-            try {
-                setLoading(true);
-                const response = await axios.get<Game>(`http://localhost:8080/api/games/${gameId}`, {
-                    headers: {
-                        'Authorization': `Bearer ${token}`
-                    }
-                });
-                setGame(response.data);
-            } catch (err) {
-                setError(err instanceof Error ? err.message : 'Not able to retrieve game');
-            } finally {
-                setLoading(false);
-            }
-        };
+    const fetchGameDetails = useCallback(async () => {
+        try {
+            setLoading(true);
+            const response = await axios.get<Game>(`http://localhost:8080/api/games/${gameId}`, {
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            });
+            setGame(response.data);
+        } catch (err) {
+            setError(err instanceof Error ? err.message : 'Not able to retrieve game');
+        } finally {
+            setLoading(false);
+        }
+    }, [gameId, cache, addToCache]);
 
+    useEffect(() => {
         fetchGameDetails();
-    }, [gameId]);
+    }, [fetchGameDetails]);
 
     return {game, loading, error};
 }

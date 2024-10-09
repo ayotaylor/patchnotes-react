@@ -1,12 +1,13 @@
-import React from "react";
+import React, { lazy, Suspense } from "react";
 import { useParams } from "react-router-dom";
 import { getWebStyles } from "../../styles/game/webStyleAdapter";
 import useGameDetails from "shared/hooks/useGameDetails";
 import GameHeader from "../../components/game/GameHeader";
 import GameActions from "../../components/game/GameActions";
-import GameInfo from "../../components/game/GameInfo";
-import GameStats from "../../components/game/GameStats";
-import SimilarGames from "../../components/game/SimilarGames";
+
+const GameInfo = lazy(() => import("../../components/game/GameInfo"));
+const GameStats = lazy(() => import("../../components/game/GameStats"));
+const SimilarGames = lazy(() => import("../../components/game/SimilarGames"));
 
 const GameDetails: React.FC = () => {
   const styles = getWebStyles();
@@ -14,9 +15,30 @@ const GameDetails: React.FC = () => {
   const gameId = id ? Number(id) : 0;
   const { game, loading, error } = useGameDetails(gameId);
 
-  if (loading) return <div style={{...styles.layout.container, color: styles.currentTheme.text}}>Loading...</div>;
-  if (error) return <div style={{...styles.layout.container, color: styles.currentTheme.text}}>Error: {error}</div>;
-  if (!game) return <div style={{...styles.layout.container, color: styles.currentTheme.text}}>No game found</div>;
+  if (loading)
+    return (
+      <div
+        style={{ ...styles.layout.container, color: styles.currentTheme.text }}
+      >
+        Loading...
+      </div>
+    );
+  if (error)
+    return (
+      <div
+        style={{ ...styles.layout.container, color: styles.currentTheme.text }}
+      >
+        Error: {error}
+      </div>
+    );
+  if (!game)
+    return (
+      <div
+        style={{ ...styles.layout.container, color: styles.currentTheme.text }}
+      >
+        No game found
+      </div>
+    );
 
   return (
     <div
@@ -39,21 +61,31 @@ const GameDetails: React.FC = () => {
           publisher={game.publisher}
           styles={styles}
         />
-        <GameActions gameId={game.id} averageRating={game.averageRating} styles={styles} />
-        <GameInfo
-          summary={game.summary}
-          storyLine={game.storyLine}
-          platforms={game.platforms}
-          genres={game.genres}
+        <GameActions
+          gameId={game.id}
+          averageRating={game.averageRating}
           styles={styles}
         />
-        <GameStats
-          backlogCount={game.backlogCount}
-          playingCount={game.playingCount}
-          completedCount={game.completedCount}
-          styles={styles}
-        />
-        <SimilarGames games={game.similarGames} styles={styles}/>
+        <Suspense fallback={<div>Loading game info...</div>}>
+          <GameInfo
+            summary={game.summary}
+            storyLine={game.storyLine}
+            platforms={game.platforms}
+            genres={game.genres}
+            styles={styles}
+          />
+        </Suspense>
+        <Suspense fallback={<div>Loading game info...</div>}>
+          <GameStats
+            backlogCount={game.backlogCount}
+            playingCount={game.playingCount}
+            completedCount={game.completedCount}
+            styles={styles}
+          />
+        </Suspense>
+        <Suspense fallback={<div>Loading game info...</div>}>
+          <SimilarGames games={game.similarGames} styles={styles} />
+        </Suspense>
       </div>
     </div>
   );
