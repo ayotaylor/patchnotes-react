@@ -12,8 +12,7 @@ public class SimilarGamesDto {
     private String name;
     private String cover;
 
-    public SimilarGamesDto(Long id, Long igdbId, String name) {
-        this.id = id;
+    public SimilarGamesDto(Long igdbId, String name) {
         this.igdbId = igdbId;
         this.name = name;
     }

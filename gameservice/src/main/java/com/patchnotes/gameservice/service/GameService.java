@@ -1,5 +1,8 @@
 package com.patchnotes.gameservice.service;
 
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Optional;
 
 import org.springframework.stereotype.Service;
@@ -32,17 +35,21 @@ public class GameService {
         GameDto dto = gameConverter.convertToDTO(game);
         if (dto.getSimilarGames() != null) {
             for (SimilarGamesDto similarGame : dto.getSimilarGames()) {
-                similarGame.setCover(fetchGameCover(similarGame.getIgdbId()));
+                Entry<Long, String> idCover = fetchGameCoverAndId(similarGame.getIgdbId());
+                similarGame.setId(idCover.getKey());
+                similarGame.setCover(idCover.getValue());
             }
         }
 
         return dto;
     }
 
-    public String fetchGameCover(Long igdbId) {
-
+    public Entry<Long, String> fetchGameCoverAndId(Long igdbId) {
+        Entry<Long, String> gameIdCover = null;
         Game game = gameRepo.findByIgdbId(igdbId);
-
-        return game != null ? game.getCover() : null;
+        if (game!=null) {
+            gameIdCover = Map.entry(game.getId(), game.getCover());
+        }
+        return gameIdCover.getKey() != null ? gameIdCover : null;
     }
 }

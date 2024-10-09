@@ -72,7 +72,6 @@ public class GameDtoConverter {
                 List<SimilarGamesDto> similarGameDtos = similarGames.stream()
                     .map(similarGame -> new SimilarGamesDto(
                         Long.valueOf(similarGame.get("id").toString()),
-                        Long.valueOf(similarGame.get("igdbId").toString()),
                         (String) similarGame.get("name")
                     ))
                     .collect(Collectors.toList());
