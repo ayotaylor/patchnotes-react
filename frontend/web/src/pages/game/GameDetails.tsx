@@ -8,46 +8,52 @@ import GameInfo from "../../components/game/GameInfo";
 import GameStats from "../../components/game/GameStats";
 import SimilarGames from "../../components/game/SimilarGames";
 
-const styles = getWebStyles();
-
-// interface GameDetailsProps  {
-//     gameId: number;
-// }
-
 const GameDetails: React.FC = () => {
+  const styles = getWebStyles();
   const { id } = useParams<{ id: string }>();
   const gameId = id ? Number(id) : 0;
   const { game, loading, error } = useGameDetails(gameId);
 
-  if (loading) return <div style={styles.layout.container}>Loading...</div>;
-  if (error) return <div style={styles.layout.container}>Error: {error}</div>;
-  if (!game) return <div style={styles.layout.container}>No game found</div>;
-
-  console.log('the storyline is:', game.storyLine);
+  if (loading) return <div style={{...styles.layout.container, color: styles.currentTheme.text}}>Loading...</div>;
+  if (error) return <div style={{...styles.layout.container, color: styles.currentTheme.text}}>Error: {error}</div>;
+  if (!game) return <div style={{...styles.layout.container, color: styles.currentTheme.text}}>No game found</div>;
 
   return (
-    <div style={styles.layout.container}>
-      <div style={styles.layout.gameDetails}>
+    <div
+      style={{
+        ...styles.layout.container,
+        backgroundColor: styles.currentTheme.background,
+      }}
+    >
+      <div
+        style={{
+          ...styles.layout.gameDetails,
+          color: styles.currentTheme.text,
+        }}
+      >
         <GameHeader
           name={game.name}
           cover={game.cover}
           releaseDate={game.firstReleaseDate}
           developer={game.developer}
           publisher={game.publisher}
+          styles={styles}
         />
-        <GameActions gameId={game.id} averageRating={game.averageRating} />
+        <GameActions gameId={game.id} averageRating={game.averageRating} styles={styles} />
         <GameInfo
           summary={game.summary}
           storyLine={game.storyLine}
           platforms={game.platforms}
           genres={game.genres}
+          styles={styles}
         />
         <GameStats
           backlogCount={game.backlogCount}
           playingCount={game.playingCount}
           completedCount={game.completedCount}
+          styles={styles}
         />
-        <SimilarGames games={game.similarGames} />
+        <SimilarGames games={game.similarGames} styles={styles}/>
       </div>
     </div>
   );

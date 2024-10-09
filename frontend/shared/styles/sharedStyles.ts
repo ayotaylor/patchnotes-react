@@ -4,13 +4,18 @@
 
 export type Style = Record<string, string | number>;
 
+export interface ColorScheme {
+  background: string;
+  text: string;
+  secondary: string;
+  accent: string;
+  cardBackground: string;
+}
+
 export interface SharedStyles {
   colors: {
-    background: string;
-    text: string;
-    secondary: string;
-    accent: string;
-    cardBackground: string;
+    light: ColorScheme;
+    dark: ColorScheme;
   };
   layout: {
     container: Style;
@@ -61,11 +66,20 @@ export interface SharedStyles {
 
 export const sharedStyles: SharedStyles = {
   colors: {
-    background: "#14181c",
-    text: "#ffffff",
-    secondary: "#456",
-    accent: "#00e054",
-    cardBackground: "#2c3440",
+    light: {
+      background: "#ffffff",
+      text: "#000000",
+      secondary: "#757575",
+      accent: "#00a86b",
+      cardBackground: "#f0f0f0",
+    },
+    dark: {
+      background: "#14181c",
+      text: "#ffffff",
+      secondary: "#9e9e9e",
+      accent: "#00e054",
+      cardBackground: "#2c3440",
+    },
   },
   layout: {
     container: {
@@ -116,7 +130,7 @@ export const sharedStyles: SharedStyles = {
   gameActions: {
     container: {
       flexDirection: "row",
-      justifyContent: "flex-start",
+      justifyContent: "space-between",
       marginBottom: 30,
     },
     button: {
@@ -198,7 +212,7 @@ export const sharedStyles: SharedStyles = {
     grid: {
       flexDirection: "row",
       flexWrap: "wrap",
-      justifyContent: "space-between",
+      justifyContent: "space-evenly",
     },
     card: {
       width: "22%",

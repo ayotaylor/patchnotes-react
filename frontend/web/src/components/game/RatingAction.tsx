@@ -1,17 +1,19 @@
 import React, { useState } from "react";
 import axios from "axios";
-import { getWebStyles } from "../../styles/game/webStyleAdapter";
-
-const styles = getWebStyles();
+import { SharedStyles } from "../../shared/styles/sharedStyles";
 
 interface RatingActionProps {
   gameId: number;
   initialRating: number;
+  styles: ReturnType<
+    typeof import("../../styles/game/webStyleAdapter").getWebStyles
+  >;
 }
 
 const RatingAction: React.FC<RatingActionProps> = ({
   gameId,
   initialRating,
+  styles,
 }) => {
   const [rating, setRating] = useState<number>(initialRating);
 
@@ -30,14 +32,16 @@ const RatingAction: React.FC<RatingActionProps> = ({
         <button
           key={star}
           onClick={() => handleRating(star)}
-          style={
-            star <= rating
-              ? {
-                  ...styles.ratingAction.star,
-                  ...styles.ratingAction.activeStar,
-                }
-              : styles.ratingAction.star
-          }
+          style={{
+            ...styles.ratingAction.star,
+            color:
+              star <= rating
+                ? styles.currentTheme.accent
+                : styles.currentTheme.secondary,
+            backgroundColor: "transparent",
+            border: "none",
+            cursor: "pointer",
+          }}
         >
           ★
         </button>

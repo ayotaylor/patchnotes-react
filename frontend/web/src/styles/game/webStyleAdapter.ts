@@ -1,4 +1,5 @@
-import { SharedStyles, sharedStyles, Style } from '../../shared/styles/sharedStyles'
+import { UseTheme } from 'shared/components/ThemeContext';
+import { SharedStyles, sharedStyles, Style, ColorScheme } from '../../shared/styles/sharedStyles';
 
 // Convert shared style to CSS-in-JS style
 const convertToCSSStyle = (style: Style): React.CSSProperties => {
@@ -13,9 +14,15 @@ const convertToCSSStyle = (style: Style): React.CSSProperties => {
 };
 
 // Process shared styles for web
-export const getWebStyles = (): SharedStyles => {
-  const webStyles: Partial<SharedStyles> = {
-    colors: sharedStyles.colors,
+export const getWebStyles = (): SharedStyles & { currentTheme: ColorScheme }=> {
+  const { theme } = UseTheme();
+
+  const webStyles: SharedStyles = {
+    ...sharedStyles,
+    colors: {
+      light: sharedStyles.colors.light,
+      dark: sharedStyles.colors.dark
+    }
   };
 
   (Object.keys(sharedStyles) as Array<keyof SharedStyles>).forEach((key) => {
@@ -27,5 +34,10 @@ export const getWebStyles = (): SharedStyles => {
     }
   });
 
-  return webStyles as SharedStyles;
+  const currentTheme = webStyles.colors[theme];
+
+  return {
+    ...webStyles,
+    currentTheme
+  };
 };
