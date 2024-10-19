@@ -1,17 +1,33 @@
 package com.patchnotes.gameservice.service;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
-import org.apache.el.stream.Optional;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import com.patchnotes.gameservice.model.Game;
+import com.patchnotes.gameservice.model.AlternativeNameEntity;
+import com.patchnotes.gameservice.model.FranchiseEntity;
+import com.patchnotes.gameservice.model.GameCollectionEntity;
+import com.patchnotes.gameservice.model.GameEntity;
+import com.patchnotes.gameservice.model.GenreEntity;
+import com.patchnotes.gameservice.model.KeywordEntity;
+import com.patchnotes.gameservice.model.LanguageEntity;
+import com.patchnotes.gameservice.model.PlatformEntity;
+import com.patchnotes.gameservice.repo.FranchiseRepository;
+import com.patchnotes.gameservice.repo.GameCollectionRepository;
 import com.patchnotes.gameservice.repo.GameRepository;
+import com.patchnotes.gameservice.repo.GenreRepository;
+import com.patchnotes.gameservice.repo.KeywordRepository;
+import com.patchnotes.gameservice.repo.LanguageRepository;
+import com.patchnotes.gameservice.repo.PlatformRepository;
 import com.patchnotes.gameservice.util.GameApiClient;
 import com.patchnotes.gameservice.util.MapGameUtil;
 
@@ -21,11 +37,33 @@ public class GameApiService {
     private final GameApiClient gameApiClient;
     private final MapGameUtil mapGameUtil;
     private final GameRepository gameRepository;
+    private final FranchiseRepository franchiseRepo;
+    private final GameCollectionRepository gameCollectionRepo;
+    private final GenreRepository genreRepo;
+    private final KeywordRepository keywordRepo;
+    private final LanguageRepository languageRepo;
+    private final PlatformRepository platformRepo;
 
-    public GameApiService(GameApiClient gameApiClient, MapGameUtil mapGameUtil, GameRepository gameRepository) {
+    private final Map<String, PlatformEntity> platformCache = new ConcurrentHashMap<>();
+    private final Map<String, GenreEntity> genreCache = new ConcurrentHashMap<>();
+    private final Map<String, FranchiseEntity> franchiseCache = new ConcurrentHashMap<>();
+    private final Map<String, KeywordEntity> keywordCache = new ConcurrentHashMap<>();
+    private final Map<String, LanguageEntity> languageCache = new ConcurrentHashMap<>();
+    private final Map<String, GameCollectionEntity> gameCollectionCache = new ConcurrentHashMap<>();
+
+    public GameApiService(GameApiClient gameApiClient, MapGameUtil mapGameUtil, GameRepository gameRepository,
+        FranchiseRepository franchiseRepo, GameCollectionRepository gameCollectionRepo,
+        GenreRepository genreRepo, KeywordRepository keywordRepo, LanguageRepository languageRepo,
+        PlatformRepository platformRepo) {
         this.gameApiClient = gameApiClient;
         this.mapGameUtil = mapGameUtil;
         this.gameRepository = gameRepository;
+        this.franchiseRepo = franchiseRepo;
+        this.gameCollectionRepo = gameCollectionRepo;
+        this.genreRepo = genreRepo;
+        this.keywordRepo = keywordRepo;
+        this.languageRepo = languageRepo;
+        this.platformRepo = platformRepo;
     }
 
     @Transactional
@@ -39,18 +77,22 @@ public class GameApiService {
             if (response.size() == 0) {
                 hasMoreData = false;
             } else {
-                List<Game> games = mapResponseToGames(response);
+                List<GameEntity> games = mapResponseToGames(response);
                 bulkUpsertGames(games);
                 offset += limit;
+                // Implement rate limiting here
+                try {
+                    Thread.sleep(1000); // Sleep for 1 second between requests
+                } catch (InterruptedException e) {
+                    Thread.currentThread().interrupt();
+                }
             }
         }
     }
 
-    public Game getGameByIgdbId(Long id) {
+    public GameEntity getGameByIgdbId(Long id) {
         JsonNode response = gameApiClient.getGames(buildRequestBodyForId(id));
-
-        List<Game> games = mapResponseToGames(response);
-
+        List<GameEntity> games = mapResponseToGames(response);
         return games.get(0) != null ? games.get(0) : null;
     }
 
@@ -76,41 +118,56 @@ public class GameApiService {
                 "where id = %d;", id);
     }
 
-    private List<Game> mapResponseToGames(JsonNode response) {
-        List<Game> games = new ArrayList<>();
+    private List<GameEntity> mapResponseToGames(JsonNode response) {
+        List<GameEntity> games = new ArrayList<>();
         for (JsonNode gameNode : response) {
-            Game game = mapGameUtil.mapIgdbResponseToGame(gameNode);
+            GameEntity game = mapGameUtil.mapIgdbResponseToGame(gameNode);
             games.add(game);
         }
         return games;
     }
 
     //TODO: handle exceptions properly
-    private void bulkUpsertGames(List<Game> games) {
+    @Transactional
+    private void bulkUpsertGames(List<GameEntity> games) {
+        int BATCH_SIZE = 1000;
         // Get all IgdbIds from the new games
-        List<Long> igdbIds = games.stream().map(Game::getIgdbId).collect(Collectors.toList());
-
+        List<Long> igdbIds = games.stream().map(GameEntity::getIgdbId).collect(Collectors.toList());
         // Fetch existing games in a single query
-        List<Game> existingGames = gameRepository.findAllByIgdbIdIn(igdbIds);
-
+        List<GameEntity> existingGames = gameRepository.findAllByIgdbIdIn(igdbIds);
         // Create a map of existing games for easy lookup
-        Map<Long, Game> existingGameMap = existingGames.stream()
-                .collect(Collectors.toMap(Game::getIgdbId, game -> game));
-        List<Game> gamesToSave = new ArrayList<>();
+        Map<Long, GameEntity> existingGameMap = existingGames.stream()
+                .collect(Collectors.toMap(GameEntity::getIgdbId, game -> game));
+        List<GameEntity> gamesToSave = new ArrayList<>();
+
+        preloadEntities();
 
         try {
-            for (Game game : games) {
-                Game existingGame = existingGameMap.get(game.getIgdbId());
+            for (GameEntity game : games) {
+                GameEntity existingGame = existingGameMap.get(game.getIgdbId());
                 if (existingGame != null) {
                     updateGameFields(existingGame, game);
+                    // Handle relationships / // saveRelatedGameFields\
+                    handleGameRelationships(existingGame, game);
                     gamesToSave.add(existingGame);
                 }
                 else {
                     gamesToSave.add(game);
                 }
+
+                // Batch insert/update when reach a certain size
+                if (gamesToSave.size() >= BATCH_SIZE) {
+                    saveEntities(gamesToSave);
+                    gamesToSave.clear();
+                }
             }
 
-            gameRepository.saveAll(gamesToSave);
+            if (!gamesToSave.isEmpty()) {
+                saveEntities(gamesToSave);
+            }
+
+            // Save all new entities at once
+            saveNewEntities();
         } catch (IllegalArgumentException e) {
             System.out.println("Failed to save to DB" + e.getMessage());
         }
@@ -119,9 +176,113 @@ public class GameApiService {
         }
     }
 
-    private void updateGameFields(Game existingGame, Game newGame) {
+    private void preloadEntities() {
+        platformRepo.findAll().forEach(p -> platformCache.put(p.getName(), p));
+        genreRepo.findAll().forEach(g -> genreCache.put(g.getName(), g));
+        franchiseRepo.findAll().forEach(f -> franchiseCache.put(f.getName(), f));
+        keywordRepo.findAll().forEach(k -> keywordCache.put(k.getName(), k));
+        languageRepo.findAll().forEach(l -> languageCache.put(l.getName(), l));
+        gameCollectionRepo.findAll().forEach(gc -> gameCollectionCache.put(gc.getName(), gc));
+    }
+
+    private void handleGameRelationships(GameEntity gameToUpdate, GameEntity game) {
+        gameToUpdate.setPlatforms(getOrCreatePlatforms(game.getPlatforms().stream()
+            .map(PlatformEntity::getName).collect(Collectors.toSet())));
+        gameToUpdate.setGenres(getOrCreateGenres(game.getGenres().stream()
+            .map(GenreEntity::getName).collect(Collectors.toSet())));
+        gameToUpdate.setFranchises(getOrCreateFranchises(game.getFranchises().stream()
+            .map(FranchiseEntity::getName).collect(Collectors.toSet())));
+        gameToUpdate.setKeywords(getOrCreateKeywords(game.getKeywords().stream()
+            .map(KeywordEntity::getName).collect(Collectors.toSet())));
+        gameToUpdate.setLanguages(getOrCreateLanguages(game.getLanguages().stream()
+            .map(LanguageEntity::getName).collect(Collectors.toSet())));
+        gameToUpdate.setCollections(getOrCreateGameCollections(game.getCollections().stream()
+            .map(GameCollectionEntity::getName).collect(Collectors.toSet())));
+    }
+
+    private Set<PlatformEntity> getOrCreatePlatforms(Set<String> names) {
+        return getOrCreateEntities(names, platformCache, name -> {
+            PlatformEntity entity = new PlatformEntity();
+            entity.setName(name);
+            return entity;
+        });
+    }
+
+    private Set<GenreEntity> getOrCreateGenres(Set<String> names) {
+        return getOrCreateEntities(names, genreCache, name -> {
+            GenreEntity entity = new GenreEntity();
+            entity.setName(name);
+            return entity;
+        });
+    }
+
+    private Set<FranchiseEntity> getOrCreateFranchises(Set<String> names) {
+        return getOrCreateEntities(names, franchiseCache, name -> {
+            FranchiseEntity entity = new FranchiseEntity();
+            entity.setName(name);
+            return entity;
+        });
+    }
+
+    private Set<KeywordEntity> getOrCreateKeywords(Set<String> names) {
+        return getOrCreateEntities(names, keywordCache, name -> {
+            KeywordEntity entity = new KeywordEntity();
+            entity.setName(name);
+            return entity;
+        });
+    }
+
+    private Set<LanguageEntity> getOrCreateLanguages(Set<String> names) {
+        return getOrCreateEntities(names, languageCache, name -> {
+            LanguageEntity entity = new LanguageEntity();
+            entity.setName(name);
+            return entity;
+        });
+    }
+
+    private Set<GameCollectionEntity> getOrCreateGameCollections(Set<String> names) {
+        return getOrCreateEntities(names, gameCollectionCache, name -> {
+            GameCollectionEntity entity = new GameCollectionEntity();
+            entity.setName(name);
+            return entity;
+        });
+    }
+
+    private <T> Set<T> getOrCreateEntities(Set<String> names, Map<String, T> cache,
+                                           Function<String, T> entityCreator) {
+        Set<T> entities = new HashSet<>();
+
+        for (String name : names) {
+            T entity = cache.computeIfAbsent(name, entityCreator);
+            entities.add(entity);
+        }
+
+        return entities;
+    }
+
+    private void saveNewEntities() {
+        platformRepo.saveAll(platformCache.values());
+        genreRepo.saveAll(genreCache.values());
+        franchiseRepo.saveAll(franchiseCache.values());
+        keywordRepo.saveAll(keywordCache.values());
+        languageRepo.saveAll(languageCache.values());
+        gameCollectionRepo.saveAll(gameCollectionCache.values());
+
+        // Clear caches after saving
+        platformCache.clear();
+        genreCache.clear();
+        franchiseCache.clear();
+        keywordCache.clear();
+        languageCache.clear();
+        gameCollectionCache.clear();
+    }
+
+    private void saveEntities(List<GameEntity> games) {
+        gameRepository.saveAll(games);
+    }
+
+    private void updateGameFields(GameEntity existingGame, GameEntity newGame) {
         existingGame.setName(newGame.getName());
-        existingGame.setAlternativeNames(newGame.getAlternativeNames());
         existingGame.setSummary(newGame.getSummary());
         existingGame.setStoryLine(newGame.getStoryLine());
         existingGame.setFirstReleaseDate(newGame.getFirstReleaseDate());
@@ -129,23 +290,13 @@ public class GameApiService {
         existingGame.setRegionReleaseDate(newGame.getRegionReleaseDate());
         existingGame.setDeveloper(newGame.getDeveloper());
         existingGame.setPublisher(newGame.getPublisher());
-        existingGame.setPlatforms(newGame.getPlatforms());
-        existingGame.setGenres(newGame.getGenres());
         existingGame.setBundles(newGame.getBundles());
         existingGame.setRemakes(newGame.getRemakes());
         existingGame.setRemasters(newGame.getRemasters());
         existingGame.setSimilarGames(newGame.getSimilarGames());
         existingGame.setCategory(newGame.getCategory());
-        existingGame.setFranchise(newGame.getFranchise());
-        existingGame.setFranchises(newGame.getFranchises());
-        existingGame.setCollections(newGame.getCollections());
         existingGame.setCover(newGame.getCover());
         existingGame.setUrl(newGame.getUrl());
-        existingGame.setVersionParent(newGame.getVersionParent());
-        existingGame.setParentGame(newGame.getParentGame());
-        existingGame.setVersionTitle(newGame.getVersionTitle());
-        existingGame.setKeywords(newGame.getKeywords());
-        existingGame.setLanguages(newGame.getLanguages());
         existingGame.setMultiplayerModes(newGame.getMultiplayerModes());
         existingGame.setPlayerPerspectives(newGame.getPlayerPerspectives());
         existingGame.setAverageRating(newGame.getAverageRating());
@@ -153,6 +304,31 @@ public class GameApiService {
         existingGame.setPlayingCount(newGame.getPlayingCount());
         existingGame.setCompletedCount(newGame.getCompletedCount());
         existingGame.setUpdatedAt(java.time.LocalDateTime.now());
+
+        updateAlternativeNames(existingGame, newGame.getAlternativeNames());
     }
 
+    private void updateAlternativeNames(GameEntity game, Set<AlternativeNameEntity> newAlternativeNames) {
+        // Remove names that are no longer present
+        game.getAlternativeNames().removeIf(name ->
+            newAlternativeNames.stream().noneMatch(newName -> newName.getName().equals(name.getName())));
+
+        // Update existing names and add new ones
+        for (AlternativeNameEntity newName : newAlternativeNames) {
+            AlternativeNameEntity existingName = game.getAlternativeNames().stream()
+                .filter(name -> name.getName().equals(newName.getName()))
+                .findFirst()
+                .orElse(null);
+
+            if (existingName != null) {
+                // Update existing name
+                existingName.setName(newName.getName());
+                // Update other fields as necessary
+            } else {
+                // Add new name
+                newName.setGame(game);
+                game.getAlternativeNames().add(newName);
+            }
+        }
+    }
 }

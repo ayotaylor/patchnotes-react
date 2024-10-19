@@ -10,9 +10,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.patchnotes.gameservice.dto.GameApiUpdatePayload;
 import com.patchnotes.gameservice.jobs.GameDataPuller;
-import com.patchnotes.gameservice.model.Game;
+import com.patchnotes.gameservice.model.GameEntity;
 import com.patchnotes.gameservice.service.GameApiService;
-import com.patchnotes.gameservice.service.GameService;
 
 @RestController
 @RequestMapping("/games/webhook")
@@ -34,8 +33,8 @@ public class WebhookController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Game> getGame(@PathVariable Long id){
-        Game game = gameApiService.getGameByIgdbId(id);
+    public ResponseEntity<GameEntity> getGame(@PathVariable Long id){
+        GameEntity game = gameApiService.getGameByIgdbId(id);
         return game!= null ? ResponseEntity.ok(game) : ResponseEntity.notFound().build();
     }
 }

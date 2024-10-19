@@ -1,4 +1,4 @@
-package com.patchnotes.gameservice.model;
+package com.patchnotes.shared.model;
 
 public enum Category {
     MAIN_GAME(0, "Main Game"),

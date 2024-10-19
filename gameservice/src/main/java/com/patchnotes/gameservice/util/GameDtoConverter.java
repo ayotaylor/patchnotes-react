@@ -1,17 +1,25 @@
 package com.patchnotes.gameservice.util;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.patchnotes.gameservice.dto.GameDto;
-import com.patchnotes.gameservice.dto.SimilarGamesDto;
-import com.patchnotes.gameservice.model.Game;
-import com.patchnotes.gameservice.model.RegionReleaseDate;
+import com.patchnotes.shared.dto.GameDto;
+import com.patchnotes.gameservice.model.AlternativeNameEntity;
+import com.patchnotes.gameservice.model.FranchiseEntity;
+import com.patchnotes.gameservice.model.GameCollectionEntity;
+import com.patchnotes.gameservice.model.GameEntity;
+import com.patchnotes.gameservice.model.GenreEntity;
+import com.patchnotes.gameservice.model.KeywordEntity;
+import com.patchnotes.gameservice.model.LanguageEntity;
+import com.patchnotes.gameservice.model.PlatformEntity;
+import com.patchnotes.shared.model.RegionReleaseDate;
+import com.patchnotes.shared.model.SimilarGames;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Component
@@ -19,7 +27,7 @@ public class GameDtoConverter {
 
     private static ObjectMapper objectMapper = new ObjectMapper();
 
-    public GameDto convertToDTO(Game game) {
+    public GameDto convertToDTO(GameEntity game) {
 
         if (game == null) {
             return null;
@@ -36,12 +44,8 @@ public class GameDtoConverter {
         dto.setDeveloper(game.getDeveloper());
         dto.setPublisher(game.getPublisher());
         dto.setCategory(game.getCategory());
-        dto.setFranchise(game.getFranchise());
         dto.setCover(game.getCover());
         dto.setUrl(game.getUrl());
-        dto.setVersionParent(game.getVersionParent());
-        dto.setParentGame(game.getParentGame());
-        dto.setVersionTitle(game.getVersionTitle());
         dto.setAverageRating(game.getAverageRating());
         dto.setBacklogCount(game.getBacklogCount());
         dto.setPlayingCount(game.getPlayingCount());
@@ -50,13 +54,25 @@ public class GameDtoConverter {
         // Convert JSON strings to objects/lists
         try {
             if (game.getAlternativeNames() != null) {
-                dto.setAlternativeNames(objectMapper.readValue(game.getAlternativeNames(), List.class));
+                Set<AlternativeNameEntity> alternativeNames = (Set<AlternativeNameEntity>) game.getAlternativeNames();
+                Set<String> alternativeNameStrings = alternativeNames.stream()
+                    .map(AlternativeNameEntity::getName)
+                    .collect(Collectors.toSet());
+                dto.setAlternativeNames(alternativeNameStrings);
             }
             if (game.getPlatforms() != null) {
-                dto.setPlatforms(objectMapper.readValue(game.getPlatforms(), List.class));
+                Set<PlatformEntity> platformNames = (Set<PlatformEntity>) game.getPlatforms();
+                Set<String> platformNameStrings = platformNames.stream()
+                    .map(PlatformEntity::getName)
+                    .collect(Collectors.toSet());
+                dto.setAlternativeNames(platformNameStrings);
             }
             if (game.getGenres() != null) {
-                dto.setGenres(objectMapper.readValue(game.getGenres(), List.class));
+                Set<GenreEntity> genreNames = (Set<GenreEntity>) game.getGenres();
+                Set<String> genreNameStrings = genreNames.stream()
+                    .map(GenreEntity::getName)
+                    .collect(Collectors.toSet());
+                dto.setAlternativeNames(genreNameStrings);
             }
             if (game.getBundles() != null) {
                 dto.setBundles(objectMapper.readValue(game.getBundles(), List.class));
@@ -69,8 +85,8 @@ public class GameDtoConverter {
             }
             if (game.getSimilarGames() != null) {
                 List<Map<String, Object>> similarGames = objectMapper.readValue(game.getSimilarGames(), new TypeReference<List<Map<String, Object>>>() {});
-                List<SimilarGamesDto> similarGameDtos = similarGames.stream()
-                    .map(similarGame -> new SimilarGamesDto(
+                List<SimilarGames> similarGameDtos = similarGames.stream()
+                    .map(similarGame -> new SimilarGames(
                         Long.valueOf(similarGame.get("id").toString()),
                         (String) similarGame.get("name")
                     ))
@@ -78,16 +94,32 @@ public class GameDtoConverter {
                 dto.setSimilarGames(similarGameDtos);
             }
             if (game.getFranchises() != null) {
-                dto.setFranchises(objectMapper.readValue(game.getFranchises(), List.class));
+                Set<FranchiseEntity> franchiseNames = (Set<FranchiseEntity>) game.getFranchises();
+                Set<String> franchiseNameStrings = franchiseNames.stream()
+                    .map(FranchiseEntity::getName)
+                    .collect(Collectors.toSet());
+                dto.setAlternativeNames(franchiseNameStrings);
             }
             if (game.getCollections() != null) {
-                dto.setCollections(objectMapper.readValue(game.getCollections(), List.class));
+                Set<GameCollectionEntity> collectionNames = (Set<GameCollectionEntity>) game.getCollections();
+                Set<String> collectionNameStrings = collectionNames.stream()
+                    .map(GameCollectionEntity::getName)
+                    .collect(Collectors.toSet());
+                dto.setAlternativeNames(collectionNameStrings);
             }
             if (game.getKeywords() != null) {
-                dto.setKeywords(objectMapper.readValue(game.getKeywords(), List.class));
+                Set<KeywordEntity> keywordNames = (Set<KeywordEntity>) game.getKeywords();
+                Set<String> keywordNameStrings = keywordNames.stream()
+                    .map(KeywordEntity::getName)
+                    .collect(Collectors.toSet());
+                dto.setAlternativeNames(keywordNameStrings);
             }
             if (game.getLanguages() != null) {
-                dto.setLanguages(objectMapper.readValue(game.getLanguages(), List.class));
+                Set<LanguageEntity> languageNames = (Set<LanguageEntity>) game.getLanguages();
+                Set<String> languageNameStrings = languageNames.stream()
+                    .map(LanguageEntity::getName)
+                    .collect(Collectors.toSet());
+                dto.setAlternativeNames(languageNameStrings);
             }
             if (game.getMultiplayerModes() != null) {
                 dto.setMultiplayerModes(objectMapper.readValue(game.getMultiplayerModes(), List.class));
@@ -97,13 +129,6 @@ public class GameDtoConverter {
             }
             if (game.getRegionReleaseDate() != null) {  //TODO: come back to this
                 List<RegionReleaseDate> regionReleaseDates = objectMapper.readValue(game.getRegionReleaseDate(), List.class);
-                // List<SimilarGamesDto> similarGameDtos = similarGames.stream()
-                //     .map(similarGame -> new SimilarGamesDto(
-                //         Long.valueOf(similarGame.get("id").toString()),
-                //         (String) similarGame.get("name")
-                //     ))
-                //     .collect(Collectors.toList());
-                // dto.setSimilarGames(similarGameDtos);
                 dto.setRegionReleaseDates(regionReleaseDates);
             }
         } catch (Exception e) {
@@ -112,5 +137,12 @@ public class GameDtoConverter {
         }
 
         return dto;
+    }
+
+    private static <T> Set<String> convertObjListToStrList(Set<T> inputList) {
+        return inputList
+        .stream()
+        .map((obj) -> Objects.toString(obj, null))
+        .collect(Collectors.toSet());
     }
 }

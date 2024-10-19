@@ -7,12 +7,12 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.patchnotes.shared.dto.UserDto;
 import com.patchnotes.userservice.dto.LoginDto;
 import com.patchnotes.userservice.dto.RegisterDto;
 import com.patchnotes.userservice.dto.response.LoginResponse;
 import com.patchnotes.userservice.exception.ApiRequestException;
 import com.patchnotes.userservice.model.JwtToken;
-import com.patchnotes.userservice.model.User;
 import com.patchnotes.userservice.service.AuthService;
 
 @RequestMapping("/api/auth")
@@ -25,7 +25,7 @@ public class AuthController {
     @PostMapping("/register")
     public ResponseEntity<?> registerUser(@RequestBody RegisterDto request) {
         try {
-            User registeredUser = authService.register(request);
+            UserDto registeredUser = authService.register(request);
             return ResponseEntity.ok(registeredUser);
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(e.getMessage());

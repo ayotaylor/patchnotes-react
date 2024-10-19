@@ -1,19 +1,9 @@
-package com.patchnotes.gameservice.dto;
-
-import com.patchnotes.gameservice.model.Category;
-import com.patchnotes.gameservice.model.Region;
-import com.patchnotes.gameservice.model.RegionReleaseDate;
-
-import lombok.Getter;
-import lombok.Setter;
+package com.patchnotes.shared.model;
 
 import java.time.LocalDate;
 import java.util.List;
 
-@Getter
-@Setter
-public class GameDto {
-
+public class Game {
     private Long id;
     private Long igdbId;
     private String name;
@@ -30,22 +20,25 @@ public class GameDto {
     private List<String> bundles;
     private List<String> remakes;
     private List<String> remasters;
-    private List<SimilarGamesDto> similarGames;  // come back to this
+    private List<SimilarGames> similarGames;  // come back to this
     public Category category;
-    public String franchise;
     public List<String> franchises;
     public List<String> collections;
     public String cover;
     public String url;
-    public String versionParent;
-    public String parentGame;
-    public String versionTitle;
     public List<String> keywords;
     public List<String> languages;
     public List<String> multiplayerModes;
     public List<String> playerPerspectives;
-    private Double averageRating;
-    private Integer backlogCount;
-    private Integer playingCount;
-    private Integer completedCount;
+    private double averageRating;
+    private int totalReviews;
+    private int backlogCount;
+    private int playingCount;
+    private int completedCount;
+
+     // Business logic methods
+    // public boolean isNewRelease() { /* implementation */ }
+    // public String getRatingCategory() { /* implementation */ }
+    // public boolean isMultiPlatform() { /* implementation */ }
+    // public boolean isCrossGenre() { /* implementation */ }
 }

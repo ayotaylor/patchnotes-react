@@ -6,6 +6,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Profile;
+import org.springframework.retry.annotation.EnableRetry;
 import org.springframework.scheduling.annotation.EnableScheduling;
 
 import com.patchnotes.gameservice.jobs.GameDataPuller;
@@ -13,6 +14,7 @@ import com.patchnotes.gameservice.jobs.GameDataPuller;
 @SpringBootApplication
 @EnableDiscoveryClient
 @EnableScheduling
+@EnableRetry
 public class GameserviceApplication {
 
 	public static void main(String[] args) {

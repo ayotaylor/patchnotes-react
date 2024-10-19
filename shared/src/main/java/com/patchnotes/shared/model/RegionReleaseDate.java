@@ -1,4 +1,4 @@
-package com.patchnotes.gameservice.model;
+package com.patchnotes.shared.model;
 
 import java.time.LocalDate;
 

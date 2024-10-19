@@ -4,6 +4,7 @@ WORKDIR /app
 COPY pom.xml .
 RUN mvn dependency:go-offline
 COPY src ./src
+COPY --from=shared:latest /root/.m2 /root/.m2
 RUN mvn clean package -DskipTests
 
 FROM openjdk:21-jdk
