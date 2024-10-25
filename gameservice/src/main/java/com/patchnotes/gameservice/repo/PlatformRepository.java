@@ -3,7 +3,7 @@ package com.patchnotes.gameservice.repo;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
-import com.patchnotes.gameservice.model.PlatformEntity;
+import com.patchnotes.gameservice.entity.PlatformEntity;
 
 import java.util.List;
 import java.util.Set;

@@ -66,7 +66,7 @@ public class AuthService {
 
         UserEntity savedUser = userRepository.save(user);
 
-        return userMapper.convertToDTO(savedUser);
+        return userMapper.convertToUserEntityDTO(savedUser);
     }
 
     public JwtToken authenticate(LoginDto input) {

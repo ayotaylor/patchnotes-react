@@ -17,17 +17,17 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.fasterxml.jackson.databind.node.ArrayNode;
-import com.patchnotes.shared.model.Category;
-import com.patchnotes.gameservice.model.AlternativeNameEntity;
-import com.patchnotes.gameservice.model.FranchiseEntity;
-import com.patchnotes.gameservice.model.GameCollectionEntity;
-import com.patchnotes.gameservice.model.GameEntity;
-import com.patchnotes.gameservice.model.GenreEntity;
-import com.patchnotes.gameservice.model.KeywordEntity;
-import com.patchnotes.gameservice.model.LanguageEntity;
-import com.patchnotes.gameservice.model.PlatformEntity;
-import com.patchnotes.shared.model.Region;
-import com.patchnotes.shared.model.RegionReleaseDate;
+import com.patchnotes.gameservice.entity.AlternativeNameEntity;
+import com.patchnotes.gameservice.entity.FranchiseEntity;
+import com.patchnotes.gameservice.entity.GameCollectionEntity;
+import com.patchnotes.gameservice.entity.GameEntity;
+import com.patchnotes.gameservice.entity.GenreEntity;
+import com.patchnotes.gameservice.entity.KeywordEntity;
+import com.patchnotes.gameservice.entity.LanguageEntity;
+import com.patchnotes.gameservice.entity.PlatformEntity;
+import com.patchnotes.shared.model.game.Category;
+import com.patchnotes.shared.model.game.Region;
+import com.patchnotes.shared.model.game.RegionReleaseDate;
 
 @Component
 public class MapGameUtil {

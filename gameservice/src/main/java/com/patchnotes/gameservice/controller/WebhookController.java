@@ -9,8 +9,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.patchnotes.gameservice.dto.GameApiUpdatePayload;
+import com.patchnotes.gameservice.entity.GameEntity;
 import com.patchnotes.gameservice.jobs.GameDataPuller;
-import com.patchnotes.gameservice.model.GameEntity;
 import com.patchnotes.gameservice.service.GameApiService;
 
 @RestController

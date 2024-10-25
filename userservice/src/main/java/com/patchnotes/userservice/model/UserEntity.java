@@ -15,14 +15,19 @@ import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.PrePersist;
 import jakarta.persistence.PreUpdate;
+import jakarta.persistence.Table;
 import lombok.Getter;
 import lombok.Setter;
+
+import java.util.Set;
 
 @Entity
 @Getter
 @Setter
+@Table(name = "user")
 public class UserEntity implements UserDetails {
 
     @Id
@@ -74,6 +79,9 @@ public class UserEntity implements UserDetails {
     public String getUsername() {
         return username;
     }
+
+    @OneToMany(mappedBy = "user")
+    private Set<UserGameStatusEntity> userStatuses;
 
     // TODO: come back to these methods to modify
     @Override

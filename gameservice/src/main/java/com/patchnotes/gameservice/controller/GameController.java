@@ -10,9 +10,14 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.patchnotes.gameservice.exception.GameServiceException;
 import com.patchnotes.gameservice.service.GameService;
 import com.patchnotes.shared.dto.GameDto;
+import com.patchnotes.shared.dto.GameListResponse;
 
+import lombok.extern.slf4j.Slf4j;
+
+@Slf4j
 @RequestMapping("/api/games")
 @RestController
 public class GameController {
@@ -24,17 +29,24 @@ public class GameController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<GameDto> getGamebyId(@PathVariable Long id) {
+    public ResponseEntity<GameDto> getGameById(@PathVariable Long id) {
 
         GameDto response = gameService.getGameById(id);
 
         return response != null ? ResponseEntity.ok(response) : ResponseEntity.notFound().build();
     }
 
-    @PostMapping("/usergames")
-    public ResponseEntity<List<GameDto>> getUserGames(@RequestBody List<Long> gameIds) {
-        List<GameDto> response = gameService.getGamesById(gameIds);
+    @PostMapping("")
+    public ResponseEntity<GameListResponse> getGamesById(@RequestBody List<Long> ids) {
+        try {
+            List<GameDto> games = gameService.getGamesById(ids);
 
-        return response != null ? ResponseEntity.ok(response) : ResponseEntity.notFound().build();
+            GameListResponse response = GameListResponse.of(games);
+
+            return response != null ? ResponseEntity.ok(response) : ResponseEntity.notFound().build();
+        } catch (GameServiceException e) {
+            log.error("Error processing request for game ids {}: {}", ids, e.getMessage());
+            return ResponseEntity.internalServerError().build();
+        }
     }
 }
