@@ -35,16 +35,16 @@ logging:
   level:
     org:
       springframework:
-        security: DEBUG
-        netflix: DEBUG
+        security: INFO
+        netflix: INFO
         web:
-          reactive: DEBUG
+          reactive: INFO
         cloud:
-          gateway: TRACE
+          gateway: INFO
           netflix:
-            eureka: DEBUG
+            eureka: INFO
           client:
-            loadbalancer: DEBUG
+            loadbalancer: INFO
     com:
       netflix:
-        discovery: DEBUG
+        discovery: INFO

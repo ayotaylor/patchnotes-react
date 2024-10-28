@@ -11,7 +11,7 @@ spring:
       ddl-auto: update # create and drop table, good for testing, production set to none or comment it
     properties:
       jdbc:
-        batch-size: 30
+        batch-size: 500
         order-inserts: true
     show-sql: true
     database-platform: org.hibernate.dialect.MySQLDialect
@@ -27,18 +27,25 @@ eureka:
   client:
     serviceUrl:
       defaultZone: http://localhost:8761/eureka/
-    enabled: false  # remove this
+    #enabled: false  # remove this
   instance:
     leaseRenewalIntervalInSeconds: 10
     leaseExpirationDurationInSeconds: 30
 
-# logging:
-#   level:
-#     org:
-#       springframework:
-#         security: DEBUG
-#         web:
-#           reactive: DEBUG
-#         cloud:
-#           netflix:
-#             eureka: DEBUG
+logging:
+  level:
+    org:
+      springframework:
+        security: DEBUG
+        netflix: DEBUG
+        web:
+          reactive: DEBUG
+        cloud:
+          gateway: TRACE
+          netflix:
+            eureka: DEBUG
+          client:
+            loadbalancer: DEBUG
+    com:
+      netflix:
+        discovery: INFO

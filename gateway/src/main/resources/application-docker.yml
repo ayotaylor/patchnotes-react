@@ -33,20 +33,20 @@ eureka:
 server:
   port: 8080
 
-# logging:
-#   level:
-#     org:
-#       springframework:
-#         security: DEBUG
-#         netflix: DEBUG
-#         web:
-#           reactive: DEBUG
-#         cloud:
-#           gateway: DEBUG
-#           netflix:
-#             eureka: DEBUG
-#           client:
-#             loadbalancer: DEBUG
+logging:
+  level:
+    org:
+      springframework:
+        security: INFO
+        netflix: INFO
+        web:
+          reactive: INFO
+        cloud:
+          gateway: INFO
+          netflix:
+            eureka: INFO
+          client:
+            loadbalancer: INFO
 
 jwt: # change secret
   secret: 8d7caec7c5cdc2e69d174e54fb8253ee0e929c5a295651629fcdab24667da806

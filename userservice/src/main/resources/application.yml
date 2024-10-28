@@ -23,6 +23,7 @@ eureka:
   client:
     serviceUrl:
       defaultZone: http://localhost:8761/eureka/
+    #enabled: false  # remove this
   instance:
     leaseRenewalIntervalInSeconds: 10
     leaseExpirationDurationInSeconds: 30
@@ -47,3 +48,7 @@ logging:
 jwt:
   secret: 8d7caec7c5cdc2e69d174e54fb8253ee0e929c5a295651629fcdab24667da806
   expiration: 3600000  # 1 hour in milliseconds
+
+game:
+  service:
+    url: http://localhost:8083

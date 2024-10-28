@@ -22,7 +22,7 @@ import com.patchnotes.userservice.service.UserService;
 import java.util.List;
 
 @RestController
-@RequestMapping("api/user")
+@RequestMapping("api/users")
 public class UserController {
     private final UserService userService;
 
