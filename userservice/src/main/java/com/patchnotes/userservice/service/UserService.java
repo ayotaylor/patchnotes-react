@@ -18,6 +18,7 @@ import com.patchnotes.shared.dto.UserGameStatusDto;
 import com.patchnotes.shared.entity.UserGameStatusId;
 import com.patchnotes.shared.enums.GameStatus;
 import com.patchnotes.userservice.client.GameClient;
+import com.patchnotes.userservice.dto.UserProfileRequest;
 import com.patchnotes.userservice.exception.GameClientException;
 import com.patchnotes.userservice.model.UserEntity;
 import com.patchnotes.userservice.model.UserGameStatusEntity;
@@ -50,16 +51,17 @@ public class UserService {
         return userMapper.convertToUserEntityDTO(user);
     }
 
-    public UserDto updateUserProfile(UserEntity user) {
+    public UserDto updateUserProfile(UserProfileRequest user) {
         UserEntity userToUpdate = userRepo.findById(user.getId())
             .orElseThrow(() -> new NotFoundException("User not found"));
 
-        userToUpdate.setBio(user.getBio());
-        userToUpdate.setName(user.getName());
-        userToUpdate.setPfp(user.getPfp());
-        userToUpdate.setTopFive(user.getTopFive());
+        // set values if they are to be updated
+        Optional.ofNullable(user.getBio()).ifPresent(userToUpdate::setBio); // userToUpdate.setBio(user.getBio());
+        Optional.ofNullable(user.getName()).ifPresent(userToUpdate::setName); // userToUpdate.setName(user.getName());
+        Optional.ofNullable(user.getPfp()).ifPresent(userToUpdate::setPfp); // userToUpdate.setPfp(user.getPfp());
+        Optional.ofNullable(user.getTopFive()).ifPresent(userToUpdate::setTopFive); // userToUpdate.setTopFive(user.getTopFive());
 
-        UserEntity updatedUser = userRepo.save(user);
+        UserEntity updatedUser = userRepo.save(userToUpdate);
 
         return userMapper.convertToUserEntityDTO(updatedUser);
     }
