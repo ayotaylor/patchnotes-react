@@ -12,8 +12,8 @@ import org.springframework.stereotype.Service;
 import com.patchnotes.shared.dto.UserDto;
 import com.patchnotes.userservice.dto.LoginDto;
 import com.patchnotes.userservice.dto.RegisterDto;
+import com.patchnotes.userservice.dto.response.LoginResponse;
 import com.patchnotes.userservice.exception.ApiRequestException;
-import com.patchnotes.userservice.model.JwtToken;
 import com.patchnotes.userservice.model.UserEntity;
 import com.patchnotes.userservice.model.UserType;
 import com.patchnotes.userservice.repo.UserRepository;
@@ -69,7 +69,7 @@ public class AuthService {
         return userMapper.convertToUserEntityDTO(savedUser);
     }
 
-    public JwtToken authenticate(LoginDto input) {
+    public LoginResponse authenticate(LoginDto input) {
         try {
             authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(
@@ -79,13 +79,15 @@ public class AuthService {
             UserEntity authenticatedUser = userRepository.findByUsername(input.getUsername())
                     .orElseThrow(() -> new RuntimeException("User not found"));
 
+            UserDto user = userMapper.convertToUserEntityDTO(authenticatedUser);
             String token = jwtUtil.generateToken(authenticatedUser);
-            JwtToken jwtToken = new JwtToken();
-            jwtToken.setToken(token);
-            jwtToken.setExpiration(jwtUtil.getExpirationTime());
-            jwtToken.setUser(authenticatedUser.getUsername());
+            long expiration = jwtUtil.getExpirationTime();
+            // JwtToken jwtToken = new JwtToken();
+            // jwtToken.setToken(token);
+            // jwtToken.setExpiration(jwtUtil.getExpirationTime());
+            // jwtToken.setUser(user);
 
-            return jwtToken;
+            return new LoginResponse(user, token, expiration);
         } catch (AuthenticationException e) {
             throw new ApiRequestException("Invalid login credentials", HttpStatus.NOT_FOUND);
         } catch (RuntimeException e) {
