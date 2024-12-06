@@ -4,13 +4,14 @@ import { useAuth } from "../../hooks/useAuth";
 import {
   LayoutContainer,
   Header,
-  HeaderContent,
   Logo,
   Nav,
   NavLink,
   UserMenu,
   Avatar,
   MainContent,
+  HeaderContainer,
+  ContentContainer,
 } from "./styles";
 
 export const Layout: React.FC = () => {
@@ -24,9 +25,9 @@ export const Layout: React.FC = () => {
 
   return (
     <LayoutContainer>
-      <Header>
-        <HeaderContent>
-          <Logo to="/dashboard">GameTracker</Logo>
+      <HeaderContainer>
+        <Header>
+          <Logo to="/dashboard">PatchNotes</Logo>
 
           {user && (
             <Nav>
@@ -47,12 +48,14 @@ export const Layout: React.FC = () => {
               </UserMenu>
             </Nav>
           )}
-        </HeaderContent>
-      </Header>
+        </Header>
+      </HeaderContainer>
 
-      <MainContent>
-        <Outlet />
-      </MainContent>
+      <ContentContainer>
+        <MainContent>
+          <Outlet />
+        </MainContent>
+      </ContentContainer>
     </LayoutContainer>
   );
 };

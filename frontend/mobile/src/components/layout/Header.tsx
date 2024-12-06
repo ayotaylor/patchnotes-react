@@ -16,7 +16,7 @@ export const Header: React.FC = () => {
   return (
     <HeaderContainer>
       <HeaderContent>
-        <HeaderTitle>GameTracker</HeaderTitle>
+        <HeaderTitle>PatchNotes</HeaderTitle>
         {user && (
           <TouchableOpacity
             onPress={() =>

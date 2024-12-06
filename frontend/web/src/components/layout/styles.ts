@@ -2,26 +2,34 @@ import styled from "styled-components";
 import { Link } from "react-router-dom";
 
 export const LayoutContainer = styled.div`
+  width: 100vw;
   min-height: 100vh;
   display: flex;
   flex-direction: column;
   background-color: ${({ theme }) => theme.colors.background.default};
-  ${({ theme }) => {
-    console.log('Theme:', theme);
-    return `background-color: ${theme?.colors?.background?.default || '#ffffff'};`
-  }}
+  margin: 0;
+  padding: 0;
+`;
+
+export const HeaderContainer = styled.div`
+  width: 100%;
+  background-color: ${({ theme }) => theme.colors.surface.default};
+  border-bottom: 1px solid ${({ theme }) => theme.colors.border.light};
 `;
 
 export const Header = styled.header`
+  max-width: 1200px;
+  width: 100%;
+  margin: 0 auto;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: ${({ theme }) => theme.spacing.md} ${({ theme }) => theme.spacing.xl};
   background-color: ${({ theme }) => theme.colors.surface.default};
-  border-bottom: 1px solid ${({ theme }) => theme.colors.border};
-  padding: ${({ theme }) => theme.spacing.md} 0;
+  border-bottom: 1px solid ${({ theme }) => theme.colors.border.light};
 `;
 
 export const HeaderContent = styled.div`
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 0 ${({ theme }) => theme.spacing.md};
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -63,14 +71,17 @@ export const Avatar = styled.img`
   object-fit: cover;
 `;
 
-export const MainContent = styled.main`
-  flex: 1;
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: ${({ theme }) => theme.spacing.xl};
+export const ContentContainer = styled.div`
   width: 100%;
+  flex: 1;
+  background-color: ${({ theme }) => theme.colors.background.default};
+`;
+
+export const MainContent = styled.main`
+  width: 100%;
+  max-width: 1200px;
   background-color: ${({ theme }) => theme.colors.surface.default};
   border-radius: ${({ theme }) => theme.borderRadius.lg};
   box-shadow: ${({ theme }) => theme.shadows.md};
-  margin-top: ${({ theme }) => theme.spacing.lg};
+  padding: ${({ theme }) => theme.spacing.xl};
 `;

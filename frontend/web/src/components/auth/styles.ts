@@ -1,12 +1,13 @@
 import styled from "styled-components";
 
 export const AuthContainer = styled.div`
-  min-height: 100vh;
+  min-height: calc(100vh - ${({ theme }) => theme.spacing.xl} * 2);
   display: flex;
   flex-direction: column;
   align-items: center;
+  justify-content: center;
   padding: ${({ theme }) => theme.spacing.xl};
-  background-color: ${({ theme }) => theme.colors.background};
+  background-color: ${({ theme }) => theme.colors.background.default};
 `;
 
 export const AuthCard = styled.div`
@@ -14,9 +15,10 @@ export const AuthCard = styled.div`
   max-width: 400px;
   margin-top: ${({ theme }) => theme.spacing.xl};
   padding: ${({ theme }) => theme.spacing.xl};
-  background-color: ${({ theme }) => theme.colors.surface};
+  background-color: ${({ theme }) => theme.colors.surface.default};
   border-radius: ${({ theme }) => theme.borderRadius.lg};
   box-shadow: ${({ theme }) => theme.shadows.lg};
+  color: ${({ theme }) => theme.colors.text.primary};
 `;
 
 export const AuthHeader = styled.h1`
@@ -47,16 +49,25 @@ export const Label = styled.label`
 export const Input = styled.input`
   width: 100%;
   padding: ${({ theme }) => theme.spacing.sm} ${({ theme }) => theme.spacing.md};
-  border: 1px solid ${({ theme }) => theme.colors.border};
+  border: 1px solid ${({ theme }) => theme.colors.border.light};
   border-radius: ${({ theme }) => theme.borderRadius.md};
-  background-color: ${({ theme }) => theme.colors.background};
+  background-color: ${({ theme }) => theme.colors.background.paper};
   color: ${({ theme }) => theme.colors.text.primary};
   font-size: ${({ theme }) => theme.typography.fontSize.md};
   transition: border-color ${({ theme }) => theme.transitions.default};
 
   &:focus {
     outline: none;
-    border-color: ${({ theme }) => theme.colors.primary};
+    border-color: ${({ theme }) => theme.colors.primary.main};
+  }
+
+  &::placeholder {
+    color: ${({ theme }) => theme.colors.text.disabled};
+  }
+
+  &:disabled {
+    background-color: ${({ theme }) => theme.colors.background.alternate};
+    cursor: not-allowed;
   }
 `;
 
@@ -70,7 +81,7 @@ export const Button = styled.button`
   transition: background-color ${({ theme }) => theme.transitions.default};
 
   &:hover {
-    background-color: ${({ theme }) => theme.colors.primaryHover};
+    background-color: ${({ theme }) => theme.colors.primary.light};
   }
 
   &:disabled {

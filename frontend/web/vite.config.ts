@@ -5,6 +5,13 @@ import path from "path";
 // https://vite.dev/config/
 export default defineConfig({
   plugins: [react()],
+  server: {
+    host: true, // Needed for Docker
+    port: 3000,
+    watch: {
+      usePolling: true // Needed for Docker on some systems
+    },
+  },
   resolve: {
     alias: {
       "@": path.resolve(__dirname, "./src"),

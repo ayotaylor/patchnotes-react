@@ -6,6 +6,7 @@ import {
   UserDto,
   ApiError,
   AuthFormErrors,
+  ERROR_MESSAGES,
 } from "../types/auth";
 import { authService } from "../services/authService";
 import { FormValues, ValidationErrors, Validator } from "@/utils/validation";
@@ -17,18 +18,18 @@ interface AuthState {
   errors: AuthFormErrors;
 }
 
-interface UseAuthReturn {
-  user: UserDto | null;
-  loading: boolean;
-  errors: AuthFormErrors;
-  login: (credentials: LoginCredentials) => Promise<void>;
-  register: (credentials: RegisterCredentials) => Promise<void>;
-  logout: () => Promise<void>;
-  validateForm: (
-    values: FormValues,
-    type: "login" | "register"
-  ) => ValidationErrors;
-}
+// interface UseAuthReturn {
+//   user: UserDto | null;
+//   loading: boolean;
+//   errors: AuthFormErrors;
+//   login: (credentials: LoginCredentials) => Promise<void>;
+//   register: (credentials: RegisterCredentials) => Promise<void>;
+//   logout: () => Promise<void>;
+//   validateForm: (
+//     values: FormValues,
+//     type: "login" | "register"
+//   ) => ValidationErrors;
+// }
 
 export const useAuth = () => {
   const [state, setState] = useState<AuthState>({
@@ -77,26 +78,15 @@ export const useAuth = () => {
   );
 
   const handleAuthError = useCallback((error: ApiError) => {
-    // Handle different types of errors
-    if (error.response) {
-      switch (error.response.status) {
-        case 401:
-          return "Invalid credentials";
-        case 409:
-          return "Email already exists";
-        case 422:
-          return "Invalid input data";
-        default:
-          return "An unexpected error occurred";
-      }
-    }
-    return "Network error. Please try again";
+    return error.status
+      ? ERROR_MESSAGES[error.status as keyof typeof ERROR_MESSAGES] || ERROR_MESSAGES.DEFAULT
+      : ERROR_MESSAGES.NETWORK;
   }, []);
 
   const login = useCallback(async (credentials: LoginCredentials) => {
     try {
       setState(prev => ({ ...prev, loading: true }));
-      const { user, token } = await authService.login(credentials);
+      const { user/*, token */ } = await authService.login(credentials);
       setState({ user, loading: false, initialized: true, errors: {} });
       navigate('/dashboard');
     } catch (error) {

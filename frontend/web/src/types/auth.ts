@@ -23,6 +23,7 @@ export interface UserDto {
 export interface LoginResponse {
   user: UserDto;
   token: string;
+  expiration: number;
 }
 
 // Form error states
@@ -34,12 +35,30 @@ export interface AuthFormErrors {
   general?: string;
 }
 
-export interface ApiError {
-  response?: {
-    data?: {
-      message?: string;
-    };
-    status: number;
-  };
-  message: string;
+export interface ApiError extends Error {
+  code?: string;
+  status?: number;
+  name: string;
 }
+
+export const createApiError = (
+  message: string,
+  code?: string,
+  status?: number
+): ApiError => {
+  const error = new Error(message) as ApiError;
+  error.name = "AuthError";
+  error.code = code;
+  error.status = status;
+  return error;
+};
+
+export const ERROR_MESSAGES = {
+  400: 'Bad Request',
+  401: 'Invalid credentials',
+  404: 'Service Not Found',
+  409: 'Email already exists',
+  422: 'Invalid input data',
+  DEFAULT: 'An unexpected error occurred',
+  NETWORK: 'Network error. Please try again'
+} as const;
