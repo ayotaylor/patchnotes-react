@@ -1,1 +1,0 @@
-export type GameStatus = 'playing' | 'completed' | 'backlog' | 'abandoned';

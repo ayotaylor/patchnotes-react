@@ -83,6 +83,7 @@ public class AuthService {
             JwtToken jwtToken = new JwtToken();
             jwtToken.setToken(token);
             jwtToken.setExpiration(jwtUtil.getExpirationTime());
+            jwtToken.setUser(authenticatedUser.getUsername());
 
             return jwtToken;
         } catch (AuthenticationException e) {

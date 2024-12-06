@@ -36,7 +36,7 @@ public class AuthController {
     public ResponseEntity<?> authenticate(@RequestBody LoginDto request) {
         try {
             JwtToken jwtTokenDetails = authService.authenticate(request);
-            LoginResponse response = new LoginResponse(jwtTokenDetails.getToken(), jwtTokenDetails.getExpiration());
+            LoginResponse response = new LoginResponse(jwtTokenDetails.getUser(), jwtTokenDetails.getToken(), jwtTokenDetails.getExpiration());
             return ResponseEntity.ok(response);
         } catch (ApiRequestException e) {
             return ResponseEntity.badRequest().body("User not found");

@@ -1,45 +1,67 @@
-import React, { useEffect, useState } from 'react';
-import { View, StyleSheet, Text } from 'react-native';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import React from "react";
+import { View } from "react-native";
+import { useNavigation } from "@react-navigation/native";
+import { Header } from "../components/layout/Header";
+import {
+  DashboardContainer,
+  SectionTitle,
+  GameGridContainer,
+  GameCard,
+  GameImage,
+  GameTitle,
+} from "../components/layout/styles";
 
-const Dashboard: React.FC = () => {
+export const Dashboard: React.FC = () => {
+  const navigation = useNavigation();
 
-    const [token, setToken] = useState('');
+  // Placeholder data - replace with actual API calls
+  const recentGames = Array(4).fill({
+    id: "1",
+    title: "Sample Game",
+    imageUrl: "https://via.placeholder.com/150x225",
+  });
 
-    const getToken = async () => {
-        const value = await AsyncStorage.getItem('token');
-        return value !== null ? value : 'no token';
+  const recommendedGames = Array(4).fill({
+    id: "2",
+    title: "Recommended Game",
+    imageUrl: "https://via.placeholder.com/150x225",
+  });
 
-    };
+  return (
+    <View style={{ flex: 1 }}>
+      <Header />
+      <DashboardContainer>
+        <SectionTitle>Recently Added</SectionTitle>
+        <GameGridContainer>
+          {recentGames.map((game, index) => (
+            <GameCard
+              key={`${game.id}-${index}`}
+              onPress={() =>
+                navigation.navigate("GameDetails", { gameId: game.id })
+                // navigation.navigate("GameDetails", { gameId: game.id })
+              }
+            >
+              <GameImage source={{ uri: game.imageUrl }} resizeMode="cover" />
+              <GameTitle>{game.title}</GameTitle>
+            </GameCard>
+          ))}
+        </GameGridContainer>
 
-    useEffect(() => {
-        getToken().then((value) => {
-          setToken(value);
-        });
-       //use effect will run after the screen complete render,
-       //and rerender if there is a state change
-     },[]);
-
-    return (
-        <View style={styles.container}>
-            <Text>{token}</Text>
-        </View>
-    );
+        <SectionTitle>Recommended For You</SectionTitle>
+        <GameGridContainer>
+          {recommendedGames.map((game, index) => (
+            <GameCard
+              key={`${game.id}-${index}`}
+              onPress={() =>
+                navigation.navigate("GameDetails", { gameId: game.id })
+              }
+            >
+              <GameImage source={{ uri: game.imageUrl }} resizeMode="cover" />
+              <GameTitle>{game.title}</GameTitle>
+            </GameCard>
+          ))}
+        </GameGridContainer>
+      </DashboardContainer>
+    </View>
+  );
 };
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: 'center',
-    padding: 16,
-  },
-  input: {
-    height: 40,
-    borderColor: 'gray',
-    borderWidth: 1,
-    marginBottom: 12,
-    paddingHorizontal: 8,
-  },
-});
-
-export default Dashboard;
