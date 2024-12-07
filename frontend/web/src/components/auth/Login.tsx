@@ -13,21 +13,48 @@ import {
   ErrorMessage,
   AuthLink,
 } from "./styles";
+import { FormValues, ValidationErrors } from "@/utils/validation";
 
 export const Login: React.FC = () => {
-  const [credentials, setCredentials] = useState({ username: "", password: "" });
-  const { login, loading, errors } = useAuth();
+  const [credentials, setCredentials] = useState({
+    username: "",
+    password: "",
+  });
+  const [validationErrors, setValidationErrors] = useState<ValidationErrors>({});
+  const { login, loading, errors, validateForm } = useAuth();
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
     setCredentials((prev) => ({
       ...prev,
-      [e.target.name]: e.target.value,
+      [name]: value,
     }));
+    // Clear validation error when user starts typing
+    if (validationErrors[name]) {
+      setValidationErrors(prev => ({
+        ...prev,
+        [name]: ''
+      }));
+    }
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    await login(credentials);
+    // Validate form before submission
+    const validationErrors = validateForm(credentials as FormValues, "login");
+    if (Object.keys(validationErrors).length > 0) {
+      // Handle validation errors
+      setValidationErrors(validationErrors);
+      return;
+    }
+
+    try {
+      await login(credentials);
+      // No need to handle navigation here as it's handled in useAuth
+    } catch (error) {
+      // Error is already handled in useAuth
+      console.error("Login failed:", error);
+    }
   };
 
   return (
@@ -45,6 +72,9 @@ export const Login: React.FC = () => {
               onChange={handleChange}
               required
             />
+            {validationErrors.username &&
+              <ErrorMessage>{validationErrors.username}</ErrorMessage>
+            }
           </FormGroup>
           <FormGroup>
             <Label htmlFor="password">Password</Label>
@@ -56,6 +86,9 @@ export const Login: React.FC = () => {
               onChange={handleChange}
               required
             />
+            {validationErrors.password &&
+              <ErrorMessage>{validationErrors.password}</ErrorMessage>
+            }
           </FormGroup>
           {errors.general && <ErrorMessage>{errors.general}</ErrorMessage>}
           <Button type="submit" disabled={loading}>

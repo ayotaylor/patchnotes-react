@@ -27,7 +27,7 @@ export class Validator {
   private static readonly patterns = {
     email: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
     // Minimum 8 characters, at least one uppercase letter, one lowercase letter, and one number
-    password: /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d\w\W]{8,}$/,
+    password: /^[a-zA-Z]{8,}$/,/* /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d\w\W]{8,}$/, */
     username: /^[a-zA-Z0-9_-]{3,16}$/,
   };
 

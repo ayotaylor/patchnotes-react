@@ -67,7 +67,8 @@ export const useAuth = () => {
       const rules =
         type === "login"
           ? {
-              email: Validator.getDefaultRules().email,
+              username: Validator.getDefaultRules().username,
+              //email: Validator.getDefaultRules().email,
               password: Validator.getDefaultRules().password,
             }
           : Validator.getDefaultRules();
@@ -102,7 +103,7 @@ export const useAuth = () => {
       await authService.register(credentials);
       // Auto-login after successful registration
       await login({
-        email: credentials.email,
+        username: credentials.username,
         password: credentials.password,
       });
     } catch (error) {
