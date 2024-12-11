@@ -21,7 +21,7 @@ export const Login: React.FC = () => {
     password: "",
   });
   const [validationErrors, setValidationErrors] = useState<ValidationErrors>({});
-  const { login, loading, errors, validateForm } = useAuth();
+  const { user, login, loading, errors, validateForm } = useAuth();
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -50,6 +50,7 @@ export const Login: React.FC = () => {
 
     try {
       await login(credentials);
+      console.log(user);
       // No need to handle navigation here as it's handled in useAuth
     } catch (error) {
       // Error is already handled in useAuth

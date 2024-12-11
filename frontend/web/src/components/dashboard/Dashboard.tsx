@@ -1,5 +1,5 @@
 import React from "react";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import {
   DashboardContainer,
   DashboardSection,
@@ -9,8 +9,12 @@ import {
   GameImage,
   GameTitle,
 } from "./styles";
+import { useAuth } from "@/hooks/useAuth";
 
 export const Dashboard: React.FC = () => {
+  const location = useLocation();
+  const { user } = useAuth(); // Get user from auth context
+  const userData = user || location.state?.user; // Use either source of user data
   // Placeholder data - replace with actual API calls
   const recentGames = Array(6).fill({
     id: "1",
@@ -27,6 +31,17 @@ export const Dashboard: React.FC = () => {
   return (
     <DashboardContainer>
       <div>
+      {userData && (
+          <DashboardSection>
+            <SectionTitle>Welcome, {userData.username}!</SectionTitle>
+            <Link
+              to={`/users/${userData.username}`}
+              state={{ user: userData }}
+            >
+              View Profile
+            </Link>
+          </DashboardSection>
+        )}
         <DashboardSection>
           <SectionTitle>Recently Added</SectionTitle>
           <GameGrid>

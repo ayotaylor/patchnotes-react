@@ -48,7 +48,7 @@ export const useAuth = () => {
         const token = await authService.getToken();
         if (token) {
           const user = await authService.getCurrentUser();
-          setState({ user, loading: false, initialized: true, errors: {} });
+          setState({ user, loading: false, initialized: true, errors: {} });  // TODO: change this later
         } else {
           setState({ user: null, loading: false, initialized: true, errors: {} });
         }
@@ -89,7 +89,7 @@ export const useAuth = () => {
       setState(prev => ({ ...prev, loading: true }));
       const { user/*, token */ } = await authService.login(credentials);
       setState({ user, loading: false, initialized: true, errors: {} });
-      navigate('/dashboard');
+      navigate('/dashboard', { state: {user} });
     } catch (error) {
       const apiError = error as ApiError;
       setState(prev => ({ ...prev, loading: false, errors: { general: handleAuthError(apiError) } }));

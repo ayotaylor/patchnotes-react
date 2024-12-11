@@ -79,7 +79,6 @@ export const ContentContainer = styled.div`
 
 export const MainContent = styled.main`
   width: 100%;
-  max-width: 1200px;
   background-color: ${({ theme }) => theme.colors.surface.default};
   border-radius: ${({ theme }) => theme.borderRadius.lg};
   box-shadow: ${({ theme }) => theme.shadows.md};

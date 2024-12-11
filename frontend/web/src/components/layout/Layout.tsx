@@ -32,17 +32,20 @@ export const Layout: React.FC = () => {
           {user && (
             <Nav>
               <NavLink to="/dashboard">Home</NavLink>
+              <NavLink to={`/users/${user.username}`} state={{ user }}>
+                Profile
+              </NavLink>
               <NavLink to={`/users/${user.id}/collection`}>Collection</NavLink>
               <NavLink to={`/users/${user.id}/lists`}>Lists</NavLink>
               <NavLink to={`/users/${user.id}/wishlist`}>Wishlist</NavLink>
 
               <UserMenu>
                 <Avatar
-                  src={user.avatarUrl || "/api/placeholder/32/32"}
+                  src={user.pfp || "/api/placeholder/32/32"}
                   alt={user.username}
                 />
-                <NavLink to={`/users/${user.id}`}>{user.username}</NavLink>
-                <NavLink to="#" onClick={handleLogout}>
+                <NavLink to={`/users/${user.id}/profile`}>{user.username}</NavLink>
+                <NavLink to="/login" onClick={handleLogout}>
                   Logout
                 </NavLink>
               </UserMenu>

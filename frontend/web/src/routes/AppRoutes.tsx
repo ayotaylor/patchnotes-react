@@ -12,6 +12,7 @@ import { Dashboard } from '../components/dashboard/Dashboard';
 import { PrivateRoute } from '../components/routing/PrivateRoute';
 import { PublicRoute } from '../components/routing/PublicRoute';
 import { Layout } from '../components/layout/Layout';
+import { UserProfile } from '@/components/profile/UserProfile';
 
 export const AppRoutes: React.FC = () => {
   return (
@@ -56,17 +57,17 @@ export const AppRoutes: React.FC = () => {
                 <GameDetails />
               </PrivateRoute>
             }
-          />
+          /> */
 
           <Route
-            path="/users/:userId"
+            path="/users/:username"
             element={
               <PrivateRoute>
                 <UserProfile />
               </PrivateRoute>
             }
           />
-
+          /*
           <Route
             path="/users/:userId/collection"
             element={

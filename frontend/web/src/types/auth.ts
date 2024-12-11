@@ -14,10 +14,11 @@ export interface RegisterCredentials {
 export interface UserDto {
   id: string;
   username: string;
+  name: string;
   email: string;
-  avatarUrl?: string;
+  pfp?: string;
   bio?: string;
-  createdAt: string;
+  topFive: string;
 }
 
 export interface LoginResponse {
