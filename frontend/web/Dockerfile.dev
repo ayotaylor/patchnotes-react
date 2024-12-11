@@ -1,0 +1,30 @@
+# Build stage
+FROM node:18-alpine
+
+WORKDIR /app
+
+# Copy package.json and yarn.lock
+COPY package*.json ./
+
+RUN npm install -g vite
+
+# Install dependencies
+RUN npm ci
+
+# Copy the web code
+COPY . .
+
+# Copy shared code
+# COPY ../shared ./src/shared
+
+# Expose port 3000
+EXPOSE 3000
+
+# # Start the development server
+# CMD ["npm", "run", "dev"]
+
+# # Use npx to ensure vite is found
+# CMD ["npx", "vite", "--port", "3000", "--host", "0.0.0.0"]
+
+# # Start the development server
+CMD ["npm", "run", "dev", "--", "--host", "0.0.0.0"]
