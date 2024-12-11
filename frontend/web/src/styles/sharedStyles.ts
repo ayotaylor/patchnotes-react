@@ -190,93 +190,198 @@ export const GameMeta = styled.span`
 `;
 
 // Review styles
-export const ReviewCard = styled.article`
+export const ReviewCard = styled.div`
   display: flex;
-  gap: ${({ theme }) => theme.spacing.lg};
-  padding-bottom: ${({ theme }) => theme.spacing.xl};
-  border-bottom: 1px solid ${({ theme }) => theme.colors.border.light};
+  flex-direction: column;
+  background: ${({ theme }) => theme.colors.surface.elevated};
+  border-radius: ${({ theme }) => theme.borderRadius.md};
+  border: 1px solid ${({ theme }) => theme.colors.border.light};
+  margin-bottom: ${({ theme }) => theme.spacing.lg};
+  overflow: hidden;
 
-  ${media.mobile} {
-    gap: ${({ theme }) => theme.spacing.md};
-    padding-bottom: ${({ theme }) => theme.spacing.lg};
-    flex-direction: column;
-  }
-`;
-
-export const ReviewPoster = styled(Link)`
-  width: 100px;
-  flex-shrink: 0;
-
-  ${media.mobile} {
-    width: 80px;
-    float: left;
-    margin-right: ${({ theme }) => theme.spacing.md};
-  }
-
-  img {
-    width: 100%;
-    height: auto;
-    border-radius: ${({ theme }) => theme.borderRadius.sm};
+  &:last-child {
+    margin-bottom: 0;
   }
 `;
 
 export const ReviewHeader = styled.div`
   display: flex;
   gap: ${({ theme }) => theme.spacing.md};
+  padding: ${({ theme }) => theme.spacing.md};
+  align-items: center;
 `;
 
-export const ReviewGameImage = styled.img`
-  width: 100px;
-  height: 150px;
+export const ReviewerInfo = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: ${({ theme }) => theme.spacing.xs};
+`;
+
+export const ReviewerAvatar = styled.img`
+  width: 40px;
+  height: 40px;
+  border-radius: ${({ theme }) => theme.borderRadius.full};
   object-fit: cover;
-  border-radius: ${({ theme }) => theme.borderRadius.sm};
 `;
 
-export const ReviewTitle = styled(Link)`
-  font-size: ${({ theme }) => theme.typography.fontSize.xl};
-  font-weight: ${({ theme }) => theme.typography.fontWeight.semibold};
+export const ReviewerName = styled(Link)`
+  font-size: ${({ theme }) => theme.typography.fontSize.sm};
+  font-weight: ${({ theme }) => theme.typography.fontWeight.medium};
   color: ${({ theme }) => theme.colors.text.primary};
   text-decoration: none;
-  display: block;
-  margin-bottom: ${({ theme }) => theme.spacing.xs};
-  line-height: 1.3;
 
   &:hover {
     color: ${({ theme }) => theme.colors.primary.main};
   }
+`;
 
-  ${media.tablet} {
-    font-size: ${({ theme }) => theme.typography.fontSize.lg};
+export const ReviewPoster = styled(Link)`
+  position: relative;
+  display: block;
+  width: 100%;
+  padding-top: 56.25%; // 16:9 aspect ratio
+  overflow: hidden;
+
+  &:hover img {
+    transform: scale(1.05);
   }
 
-  ${media.mobile} {
-    font-size: ${({ theme }) => theme.typography.fontSize.md};
-    margin-bottom: ${({ theme }) => theme.spacing.xxs};
+  img {
+    position: absolute;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform ${({ theme }) => theme.transitions.default};
   }
 `;
 
 export const ReviewContent = styled.div`
-  flex: 1;
+  padding: ${({ theme }) => theme.spacing.md};
 `;
 
-export const ReviewGameTitle = styled.h3`
-  font-size: ${({ theme }) => theme.typography.fontSize.lg};
-  font-weight: ${({ theme }) => theme.typography.fontWeight.semibold};
+export const ReviewTitleLink = styled(Link)`
+  text-decoration: none;
   color: ${({ theme }) => theme.colors.text.primary};
-  margin: 0 0 ${({ theme }) => theme.spacing.xs} 0;
+  display: block;
+  margin-bottom: ${({ theme }) => theme.spacing.xs};
+
+  &:hover {
+    color: ${({ theme }) => theme.colors.primary.main};
+  }
 `;
 
-export const ReviewText = styled.p`
-  font-size: ${({ theme }) => theme.typography.fontSize.md};
+export const ReviewActions = styled.div`
+  display: flex;
+  gap: ${({ theme }) => theme.spacing.md};
+  margin-top: ${({ theme }) => theme.spacing.md};
+  padding-top: ${({ theme }) => theme.spacing.sm};
+  border-top: 1px solid ${({ theme }) => theme.colors.border.light};
+`;
+
+export const ActionButton = styled.button`
+  display: flex;
+  align-items: center;
+  gap: ${({ theme }) => theme.spacing.xs};
+  padding: ${({ theme }) => theme.spacing.xs} ${({ theme }) => theme.spacing.sm};
+  border: none;
+  background: none;
   color: ${({ theme }) => theme.colors.text.secondary};
-  line-height: ${({ theme }) => theme.typography.lineHeight.relaxed};
-  margin: ${({ theme }) => theme.spacing.sm} 0;
-`;
-
-export const ReviewMeta = styled.div`
+  cursor: pointer;
   font-size: ${({ theme }) => theme.typography.fontSize.sm};
-  color: ${({ theme }) => theme.colors.text.secondary};
+  transition: color ${({ theme }) => theme.transitions.default};
+
+  &:hover {
+    color: ${({ theme }) => theme.colors.primary.main};
+  }
 `;
+// export const ReviewCard = styled.article`
+//   display: flex;
+//   gap: ${({ theme }) => theme.spacing.lg};
+//   padding-bottom: ${({ theme }) => theme.spacing.xl};
+//   border-bottom: 1px solid ${({ theme }) => theme.colors.border.light};
+
+//   ${media.mobile} {
+//     gap: ${({ theme }) => theme.spacing.md};
+//     padding-bottom: ${({ theme }) => theme.spacing.lg};
+//     flex-direction: column;
+//   }
+// `;
+
+// export const ReviewPoster = styled(Link)`
+//   width: 100px;
+//   flex-shrink: 0;
+
+//   ${media.mobile} {
+//     width: 80px;
+//     float: left;
+//     margin-right: ${({ theme }) => theme.spacing.md};
+//   }
+
+//   img {
+//     width: 100%;
+//     height: auto;
+//     border-radius: ${({ theme }) => theme.borderRadius.sm};
+//   }
+// `;
+
+// export const ReviewHeader = styled.div`
+//   display: flex;
+//   gap: ${({ theme }) => theme.spacing.md};
+// `;
+
+// export const ReviewGameImage = styled.img`
+//   width: 100px;
+//   height: 150px;
+//   object-fit: cover;
+//   border-radius: ${({ theme }) => theme.borderRadius.sm};
+// `;
+
+// export const ReviewTitle = styled(Link)`
+//   font-size: ${({ theme }) => theme.typography.fontSize.xl};
+//   font-weight: ${({ theme }) => theme.typography.fontWeight.semibold};
+//   color: ${({ theme }) => theme.colors.text.primary};
+//   text-decoration: none;
+//   display: block;
+//   margin-bottom: ${({ theme }) => theme.spacing.xs};
+//   line-height: 1.3;
+
+//   &:hover {
+//     color: ${({ theme }) => theme.colors.primary.main};
+//   }
+
+//   ${media.tablet} {
+//     font-size: ${({ theme }) => theme.typography.fontSize.lg};
+//   }
+
+//   ${media.mobile} {
+//     font-size: ${({ theme }) => theme.typography.fontSize.md};
+//     margin-bottom: ${({ theme }) => theme.spacing.xxs};
+//   }
+// `;
+
+// export const ReviewContent = styled.div`
+//   flex: 1;
+// `;
+
+// export const ReviewGameTitle = styled.h3`
+//   font-size: ${({ theme }) => theme.typography.fontSize.lg};
+//   font-weight: ${({ theme }) => theme.typography.fontWeight.semibold};
+//   color: ${({ theme }) => theme.colors.text.primary};
+//   margin: 0 0 ${({ theme }) => theme.spacing.xs} 0;
+// `;
+
+// export const ReviewText = styled.p`
+//   font-size: ${({ theme }) => theme.typography.fontSize.md};
+//   color: ${({ theme }) => theme.colors.text.secondary};
+//   line-height: ${({ theme }) => theme.typography.lineHeight.relaxed};
+//   margin: ${({ theme }) => theme.spacing.sm} 0;
+// `;
+
+// export const ReviewMeta = styled.div`
+//   font-size: ${({ theme }) => theme.typography.fontSize.sm};
+//   color: ${({ theme }) => theme.colors.text.secondary};
+// `;
 
 // Additional styled components for Activity items
 // TODO: maybe move to profile specific since that's the only place it might appear

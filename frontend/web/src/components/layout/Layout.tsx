@@ -20,6 +20,11 @@ export const Layout: React.FC = () => {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
 
+  const handleNavigate = (to: string, state?: any) => (e: React.MouseEvent<HTMLAnchorElement>) => {
+    e.preventDefault();
+    navigate(to, { state });
+  };
+
   const handleLogout = () => {
     logout();
     navigate("/login");
@@ -33,11 +38,18 @@ export const Layout: React.FC = () => {
 
           {user && (
             <Nav>
-              <NavLink to="/dashboard">Home</NavLink>
-              <NavLink to={`/users/${user.username}`} state={{ user }}>
+              <NavLink to="/dashboard" onClick={handleNavigate("/dashboard")}>
+                Home
+              </NavLink>
+              <NavLink
+                to={`/users/${user.username}`}
+                onClick={handleNavigate(`/users/${user.username}`, { user })}
+              >
                 Profile
               </NavLink>
-              <NavLink to={`/users/games`}>Games</NavLink>
+              <NavLink to={`/games`} onClick={handleNavigate("/games")}>
+                Games
+              </NavLink>
               <NavLink to={`/users/${user.id}/collection`}>Collection</NavLink>
               <NavLink to={`/users/${user.id}/lists`}>Lists</NavLink>
               <NavLink to={`/users/${user.id}/wishlist`}>Wishlist</NavLink>
@@ -47,7 +59,14 @@ export const Layout: React.FC = () => {
                   src={user.pfp || "/api/placeholder/32/32"}
                   alt={user.username}
                 />
-                <NavLink to={`/users/${user.id}/profile`}>{user.username}</NavLink>
+                <NavLink
+                  to={`/users/${user.username}`}
+                  onClick={handleNavigate(`/users/${user.username}`, {
+                    user,
+                  })}
+                >
+                  {user.username}
+                </NavLink>
                 <NavLink to="/login" onClick={handleLogout}>
                   Logout
                 </NavLink>

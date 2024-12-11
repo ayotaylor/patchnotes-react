@@ -7,8 +7,14 @@ interface PrivateRouteProps {
 }
 
 export const PrivateRoute: React.FC<PrivateRouteProps> = ({ children }) => {
-  const { user } = useAuth();
+  const { user, loading } = useAuth();
   const location = useLocation();
+
+  // Wait for auth to initialize
+  if (loading) {
+    return <div>Loading...</div>; // Or your loading component
+  }
+
 
   if (!user) {
     // Redirect to login but save the attempted location

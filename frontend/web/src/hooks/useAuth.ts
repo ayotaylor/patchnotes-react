@@ -33,7 +33,7 @@ interface AuthState {
 
 export const useAuth = () => {
   const [state, setState] = useState<AuthState>({
-    user: null,
+    user: JSON.parse(localStorage.getItem('user') || 'null'),
     loading: true,
     initialized: false,
     errors: {},

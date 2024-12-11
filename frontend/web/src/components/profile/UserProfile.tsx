@@ -19,12 +19,14 @@ import {
 } from "./styles";
 import { Navigate, useLocation } from "react-router-dom";
 import {
+  ActionButton,
   ActivityItem,
   ActivityLink,
   ActivityRating,
   ActivityTime,
   GameImage,
   GameImageWrapper,
+  GameMeta,
   GamesGrid,
   GameTitle,
   GameYear,
@@ -33,13 +35,15 @@ import {
   ListTitle,
   MainSection,
   PageContainer,
+  ReviewActions,
   ReviewCard,
   ReviewContent,
+  ReviewerAvatar,
+  ReviewerInfo,
+  ReviewerName,
   ReviewHeader,
-  ReviewMeta,
   ReviewPoster,
-  ReviewText,
-  ReviewTitle,
+  ReviewTitleLink,
   SectionContent,
   SectionTitle,
   SideSection,
@@ -161,27 +165,61 @@ export const UserProfile: React.FC = () => {
   const recentReviews = [
     {
       id: 1,
-      game: "Baldur's Gate 3",
-      image: "/api/placeholder/100/150",
-      rating: "5/5",
-      likes: 5,
-      comments: 10,
-      date: "December 5, 2023",
-      content:
-        "An absolutely masterful RPG that sets new standards for the genre. The depth of character interaction, consequences of choices, and tactical combat create an unforgettable experience.",
+      game: {
+        id: 101,
+        title: "Baldur's Gate 3",
+        image: "/api/placeholder/400/225",
+      },
+      reviewer: {
+        id: 1,
+        name: "GameCritic",
+        avatar: "/api/placeholder/40/40",
+      },
+      content: "A masterpiece that sets new standards for CRPGs...",
+      rating: "★★★★★",
+      date: "2 hours ago",
+      likes: 234,
+      comments: 45,
     },
     {
-      id: 2,
-      game: "Alan Wake 2",
-      image: "/api/placeholder/100/150",
-      rating: "4.5/5",
-      likes: 5,
-      comments: 10,
-      date: "November 28, 2023",
-      content:
-        "A mind-bending psychological thriller that pushes the boundaries of narrative gaming. The atmospheric world and innovative storytelling make this a must-play for horror fans.",
-    },
+        id: 2,
+        game: {
+          id: 102,
+          title: "Metal Gear Solid 3",
+          image: "/api/placeholder/400/225",
+        },
+        reviewer: {
+          id: 1,
+          name: "I hate games hence I review them",
+          avatar: "/api/placeholder/40/40",
+        },
+        content: "This game is painfully reductive. Can you believe it copies elements from it's predecessors??",
+        rating: "★★★★★",
+        date: "2 hours ago",
+        likes: 234,
+        comments: 45,
+      },
+      {
+        id: 3,
+        game: {
+          id: 101,
+          title: "The Legend Of Zelda OG",
+          image: "/api/placeholder/400/225",
+        },
+        reviewer: {
+          id: 1,
+          name: "Nintendo cuck",
+          avatar: "/api/placeholder/40/40",
+        },
+        content: "A masterpiece that sets new standards for all forms of art...",
+        rating: "★★★★★",
+        date: "2 hours ago",
+        likes: 234,
+        comments: 45,
+      },
+
   ];
+
 
   const location = useLocation();
   //const user = location.state?.user;
@@ -196,6 +234,21 @@ export const UserProfile: React.FC = () => {
   if (!profileUser) {
     return <Navigate to="/login" replace />;
   }
+
+  const handleLike = (reviewId: number) => {
+    // Handle like action
+    console.log('Liked review:', reviewId);
+  };
+
+  const handleComment = (reviewId: number) => {
+    // Handle comment action
+    console.log('Comment on review:', reviewId);
+  };
+
+  const handleShare = (reviewId: number) => {
+    // Handle share action
+    console.log('Share review:', reviewId);
+  };
 
   return (
     <PageContainer>
@@ -270,27 +323,43 @@ export const UserProfile: React.FC = () => {
         <MainSection>
           <SectionContent>
             <SectionTitle>Recent Reviews</SectionTitle>
-            {recentReviews.map((review) => (
-              <ReviewCard key={review.id}>
-                <ReviewPoster to={`/games/${review.id}`}>
-                  <img src={review.image} alt={review.game} />
-                </ReviewPoster>
-                <ReviewContent>
-                  <ReviewHeader>
-                    <ReviewTitle to={`/games/${review.id}`}>
-                      {review.game}
-                    </ReviewTitle>
-                    <ReviewMeta>
-                      {review.rating} • {review.date}
-                    </ReviewMeta>
-                  </ReviewHeader>
-                  <ReviewText>{review.content}</ReviewText>
-                  <ReviewMeta>
-                    {review.likes} likes • {review.comments} comments
-                  </ReviewMeta>
-                </ReviewContent>
-              </ReviewCard>
-            ))}
+            {recentReviews.map(review => (
+            <ReviewCard key={review.id}>
+              <ReviewHeader>
+                <ReviewerAvatar src={review.reviewer.avatar} alt={review.reviewer.name} />
+                <ReviewerInfo>
+                  <ReviewerName to={`/users/${review.reviewer.id}`}>
+                    {review.reviewer.name}
+                  </ReviewerName>
+                  <GameMeta>{review.date}</GameMeta>
+                </ReviewerInfo>
+              </ReviewHeader>
+
+              <ReviewPoster to={`/reviews/${review.id}`}>
+                <img src={review.game.image} alt={review.game.title} />
+              </ReviewPoster>
+
+              <ReviewContent>
+                <ReviewTitleLink to={`/reviews/${review.id}`}>
+                  <GameTitle>{review.game.title}</GameTitle>
+                </ReviewTitleLink>
+                <GameMeta>{review.rating}</GameMeta>
+                <p>{review.content}</p>
+
+                <ReviewActions>
+                  <ActionButton onClick={() => handleLike(review.id)}>
+                    <span>👍</span> {review.likes}
+                  </ActionButton>
+                  <ActionButton onClick={() => handleComment(review.id)}>
+                    <span>💬</span> {review.comments}
+                  </ActionButton>
+                  <ActionButton onClick={() => handleShare(review.id)}>
+                    <span>↗️</span> Share
+                  </ActionButton>
+                </ReviewActions>
+              </ReviewContent>
+            </ReviewCard>
+          ))}
           </SectionContent>
         </MainSection>
 
